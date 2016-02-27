@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour
     [Range(20, 100)]
     public int moveSpeed = 50;
 
+    private bool moving = false;
     private GameManager gameManager;
     private IBoardManager boardManager;
     private Animator animator;
@@ -55,13 +56,17 @@ public class PlayerController : MonoBehaviour
 
     void AttemptMove (Vector2 direction)
     {
-        if (!boardManager.AttemptMove(direction))
-            animator.SetTrigger("Blocked");
-        else gameManager.AddEnergy(-1);
+        if (!moving)
+        {
+            if (!boardManager.AttemptMove(direction))
+                animator.SetTrigger("Blocked");
+            else gameManager.AddEnergy(-1);
+        }
     }
 
     public IEnumerator SmoothMove (Vector3 position)
     {
+        moving = true;
         DisableMovement();
         while (transform.position != position)
         { 
@@ -71,6 +76,7 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
         EnableMovement();
+        moving = false;
     }
 
     void Update ()

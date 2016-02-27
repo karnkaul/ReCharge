@@ -60,6 +60,8 @@ public class EventHandler : MonoBehaviour
             x = 1;
 
         Vector2 direction = new Vector2(x, y);
+        if (direction.magnitude > 1.0f)
+            direction = Vector2.zero;
 
         if (direction != Vector2.zero)
         {

@@ -11,6 +11,13 @@ public class GameManager : MonoBehaviour
 
     private static bool exitReached = false;
     private static int level = 0;
+    public static int Level
+    {
+        get
+        {
+            return level;
+        }
+    }
     private static int energyCount;
     private static GameManager instance = null;
     private PlayerController playerController;
