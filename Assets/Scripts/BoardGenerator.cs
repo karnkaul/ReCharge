@@ -2,14 +2,15 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public class BoardGenerator : MonoBehaviour
+public class BoardGenerator : MonoBehaviour, IBoardGenerator
 {
     public GameObject[] tiles;
+    public GameObject exitTile;
     public int numTiles;
     public float tileSize, noiseSampleSize = 0.3f;
     public bool debugInitBoard = false;
     public GameObject powerupPrefab;
-    [Range(0.1f, 2.0f)]
+    [Range(1.0f, 5.0f)]
     public float powerupChance;
 
     public GameObject[,] tileMap;
@@ -46,11 +47,11 @@ public class BoardGenerator : MonoBehaviour
         }
     }
 
-    void InitBoard()
+    public void InitBoard()
     {
         // Freeze player for animation duartion (1s)
         gameManager.DisablePlayerController();
-        Invoke("EnablePC", 1);
+        Invoke("EnablePC", Statics.fadeDuration);
 
         // Flush all children
         foreach (Transform obj in transform)
@@ -78,9 +79,19 @@ public class BoardGenerator : MonoBehaviour
                 if (noisyIndex >= 2)
                     noPowerup = true;
 
-                // Instantiate floor tile
-                GameObject tile = Instantiate(tiles[noisyIndex], position, Quaternion.identity) as GameObject;
-                string name = "Tile " + i.ToString() + "_" + j.ToString();
+                // Instantiate floor tiles
+                GameObject tile;
+                string name;
+                if (i == numTiles - 1 && j == numTiles - 1)
+                {
+                    tile = Instantiate(exitTile, position, Quaternion.identity) as GameObject;
+                    name = "Tile " + i.ToString() + "_" + j.ToString();
+                }
+                else
+                {
+                    tile = Instantiate(tiles[noisyIndex], position, Quaternion.identity) as GameObject;
+                    name = "Tile " + i.ToString() + "_" + j.ToString();
+                }
                 tile.transform.parent = transform;
                 tile.name = name;
                 tileMap[j, i] = tile;
@@ -95,6 +106,8 @@ public class BoardGenerator : MonoBehaviour
                     powerup.name = "Power Up " + powerups.Count;
                     powerups.Add(powerup);
                 }
+
+                
 
                 // Flush
                 tile = powerup = null;

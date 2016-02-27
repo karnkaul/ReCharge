@@ -6,31 +6,31 @@ public class TileManager : MonoBehaviour
     public enum SpawnMode { Delayed, Instant };
     public SpawnMode spawnMode;
 
+    private bool exitReached;
+
     void Start ()
     {
         switch (spawnMode)
         {
             case SpawnMode.Delayed:
-                StartCoroutine(DelayedVisibility());
+                StartCoroutine(Statics.FadeIn(this.GetComponent<Renderer>()));
                 break;
             default:
                 break;
         }
-    }
-
-    IEnumerator DelayedVisibility ()
-    {
-        Renderer rend = GetComponent<Renderer>();
-        rend.material.color = new Color(1, 1, 1, 0);
-
-        yield return new WaitForSeconds(Random.Range(0.0f, 1.0f));
-        rend.material.color = new Color(1, 1, 1, 1);
+        exitReached = false;
     }
 
     void OnTriggerStay2D (Collider2D other)
     {
         if (other.tag == "Player")
         {
+            if (this.tag == "Portal" && !exitReached)
+            {
+                Debug.Log("Exit reached.");
+                FindObjectOfType<GameManager>().Invoke("LoadNext", 0.25f);
+                exitReached = true;
+            }
             BoardManager.playerTile = this.gameObject;
         }
     }

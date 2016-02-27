@@ -30,10 +30,6 @@ public class BoardManager : MonoBehaviour, IBoardManager
     {
         if (tileLocations == null)
             return Vector2.zero;
-        //for (int i = 0; i < tileLocations.GetLength(0); ++i)
-        //    for (int j = 0; j < tileLocations.GetLength(1); ++j)
-        //        if (player.transform.position == tileLocations[i, j])
-        //            return new Vector2(i, j);
 
         for (int i = 0; i < tiles.GetLength(0); ++i)
             for (int j = 0; j < tiles.GetLength(1); ++j)
@@ -56,23 +52,6 @@ public class BoardManager : MonoBehaviour, IBoardManager
     // Interface method
     public bool AttemptMove (Vector3 direction)
     {
-
-        // Get indices of player location's tiles
-        //int i = 0, j = 0;
-        //bool done = false;
-        //for (i = 0; i < tiles.GetLength(0); ++i)
-        //{
-        //    for (j = 0; j < tiles.GetLength(1); ++j)
-        //    {
-        //        if (playerTile == tiles[i, j])
-        //        {
-        //            done = true;
-        //            break;
-        //        }
-        //    }
-        //    if (done)
-        //        break;
-        //}
         Vector2 playerTileIndices = GetPlayerTileIndices();
 
         GameObject attemptedTile = GetNextTile((int)playerTileIndices.x, (int)playerTileIndices.y, direction);
@@ -85,12 +64,16 @@ public class BoardManager : MonoBehaviour, IBoardManager
             }
             else 
                 StartCoroutine(playerController.SmoothMove(attemptedTile.transform.position));
-            // player.transform.position = attemptedTile.transform.position;
         }
         else
             return false;
 
         return true;
+    }
+
+    public void ResetPlayer ()
+    {
+        player.transform.position = tiles[0, 0].transform.position;
     }
 
     GameObject GetNextTile (int i, int j, Vector2 direction)
@@ -104,10 +87,6 @@ public class BoardManager : MonoBehaviour, IBoardManager
             return null;
         }
         return tiles[newI, newJ];
-    }
-
-    void Update ()
-    {
     }
 
 }

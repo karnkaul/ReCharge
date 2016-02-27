@@ -9,10 +9,13 @@ public class GameManager : MonoBehaviour
     public Text energyText;
     public int initEnergyCount = 25;
 
+    private static bool exitReached = false;
     private static int level = 0;
     private static int energyCount;
     private static GameManager instance = null;
     private PlayerController playerController;
+    private IBoardGenerator boardGenerator;
+    private IBoardManager boardManager;
 
     void Awake()
     {
@@ -26,6 +29,9 @@ public class GameManager : MonoBehaviour
 
         if (!energyText)
             Debug.Log("Reference to Energy Text missing.");
+
+        boardManager = GameObject.Find("Board").GetComponent<IBoardManager>();
+        boardGenerator = GameObject.Find("Board").GetComponent<IBoardGenerator>();
 
         energyCount = initEnergyCount;
         playerController = FindObjectOfType<PlayerController>();
@@ -42,11 +48,19 @@ public class GameManager : MonoBehaviour
     {
         energyText.text = energyCount.ToString();
     }
+
+    public void LoadNext ()
+    {
+        StartCoroutine(Load());
+    }
+
 	IEnumerator Load ()
     {
         yield return new WaitForSeconds(levelLoadDelay);
         ++level;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        boardGenerator.InitBoard();
+        boardManager.ResetPlayer();
     }
 
 	public void DisablePlayerController ()
