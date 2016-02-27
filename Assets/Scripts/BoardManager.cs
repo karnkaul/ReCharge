@@ -9,12 +9,14 @@ public class BoardManager : MonoBehaviour, IBoardManager
 
     private GameObject[,] tiles;
     private Vector3[,] tileLocations;
+    private PlayerController playerController;
 
     void Start ()
     {
         tiles = GetComponent<BoardGenerator>().tileMap;
         if (!player)
             player = GameObject.Find("Player");
+        playerController = player.GetComponent<PlayerController>();
     }
 
     // Interface method
@@ -72,12 +74,15 @@ public class BoardManager : MonoBehaviour, IBoardManager
         {
             if (attemptedTile.tag == obstacleTag)
             {
-                // Animate
                 Debug.Log("Obstacle tag detected.");
                 return false;
             }
-            player.transform.position = attemptedTile.transform.position;
+
+            StartCoroutine(playerController.SmoothMove(attemptedTile.transform.position));
+            // player.transform.position = attemptedTile.transform.position;
         }
+        else
+            return false;
 
         return true;
     }

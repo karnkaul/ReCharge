@@ -54,7 +54,7 @@ public class EventHandler : MonoBehaviour
             y = 1;
         else if (Input.GetKeyDown(KeyCode.S))
             y = -1;
-        if (Input.GetKeyDown(KeyCode.A))
+        else if (Input.GetKeyDown(KeyCode.A))
             x = -1;
         else if (Input.GetKeyDown(KeyCode.D))
             x = 1;

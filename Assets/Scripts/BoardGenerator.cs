@@ -8,8 +8,13 @@ public class BoardGenerator : MonoBehaviour
     public int numTiles;
     public float tileSize, noiseSampleSize = 0.3f;
     public bool debugInitBoard = false;
-    public GameObject[,] tileMap;
+    public GameObject powerupPrefab;
+    [Range(0.1f, 2.0f)]
+    public float powerupChance;
 
+    public GameObject[,] tileMap;
+    [HideInInspector]
+    public List<GameObject> powerups;
 
     private bool tileSpawnComplete = false;
     public bool TileSpawnComplete
@@ -62,25 +67,37 @@ public class BoardGenerator : MonoBehaviour
                 Vector3 position = new Vector3(-2 * rend.bounds.min.x * j, -2 * rend.bounds.min.y * i, 0);
                 int noisyIndex = getNoisyTileNumber(i, j, noiseSampleSize);
 
-                // BUGGY: player can get surrounded by Obstacles
-                /*
-                // Exchange first tile if it is an Obstacle
-                if (i == 0 && j == 0)
-                //if (j == boardManager.GetPlayerTileIndices().x && i == boardManager.GetPlayerTileIndices().y) 
-                    if (tiles[noisyIndex].tag == boardManager.GetObstacleTag())
-                        noisyIndex -= 1;
-                */
-
+                bool noPowerup = false;
                 // Using guaranteed walkable circumference for now
                 if (i == 0 || j == 0 || i == numTiles - 1 || j == numTiles - 1)
+                {
                     noisyIndex = Random.Range(0, 2);
+                    noPowerup = true;
+                }
 
+                if (noisyIndex >= 2)
+                    noPowerup = true;
+
+                // Instantiate floor tile
                 GameObject tile = Instantiate(tiles[noisyIndex], position, Quaternion.identity) as GameObject;
                 string name = "Tile " + i.ToString() + "_" + j.ToString();
                 tile.transform.parent = transform;
                 tile.name = name;
                 tileMap[j, i] = tile;
-                tile = null;
+
+                // Powerup
+                float roll = Random.Range(0.0f, 10.0f);
+                GameObject powerup;
+                if (!noPowerup && powerupChance > roll)
+                {
+                    powerup = Instantiate(powerupPrefab, position, Quaternion.identity) as GameObject;
+                    powerup.transform.parent = tile.transform;
+                    powerup.name = "Power Up " + powerups.Count;
+                    powerups.Add(powerup);
+                }
+
+                // Flush
+                tile = powerup = null;
             }
         }
         boardManager.SetTileMap(tileMap);
