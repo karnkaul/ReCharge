@@ -58,6 +58,7 @@ public class GameManager : MonoBehaviour
 
     public void LoadNext ()
     {
+        DisablePlayerController();
         StartCoroutine(Load());
     }
 
@@ -68,16 +69,19 @@ public class GameManager : MonoBehaviour
         //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         boardGenerator.InitBoard();
         boardManager.ResetPlayer();
+        playerController.enabled = true;
     }
 
 	public void DisablePlayerController ()
     {
-        playerController.UnsubscirbeDelegates();
+        //playerController.UnsubscirbeDelegates();
+        playerController.enabled = false;
     }
 
     public void EnablePlayerController ()
     {
-        playerController.SubscribeDelegates();
+        //playerController.SubscribeDelegates();
+        playerController.enabled = true;
     }
 
     void GameOver()
