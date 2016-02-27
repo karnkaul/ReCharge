@@ -48,7 +48,7 @@ public class EventHandler : MonoBehaviour
 
     void ButtonInput ()
     {
-        float x = 0, y = 0;
+        short x = 0, y = 0;
 
         if (Input.GetKeyDown(KeyCode.W))
             y = 1;

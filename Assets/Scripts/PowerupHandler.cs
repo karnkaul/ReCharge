@@ -20,7 +20,6 @@ public class PowerupHandler : MonoBehaviour
             if (other.tag == "Player")
             {
                 animator.SetTrigger("consumed");
-                Debug.Log("Powerup " + this.name + " picked up.");
                 gameManager.AddEnergy(2);
                 Destroy(this.gameObject, 0.5f);
                 consumed = true;

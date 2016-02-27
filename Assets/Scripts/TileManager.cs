@@ -27,12 +27,11 @@ public class TileManager : MonoBehaviour
         rend.material.color = new Color(1, 1, 1, 1);
     }
 
-    void OnTriggerEnter2D (Collider2D other)
+    void OnTriggerStay2D (Collider2D other)
     {
         if (other.tag == "Player")
         {
             BoardManager.playerTile = this.gameObject;
         }
     }
-
 }

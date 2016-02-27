@@ -30,9 +30,14 @@ public class BoardManager : MonoBehaviour, IBoardManager
     {
         if (tileLocations == null)
             return Vector2.zero;
-        for (int i = 0; i < tileLocations.GetLength(0); ++i)
-            for (int j = 0; j < tileLocations.GetLength(1); ++j)
-                if (player.transform.position == tileLocations[i, j])
+        //for (int i = 0; i < tileLocations.GetLength(0); ++i)
+        //    for (int j = 0; j < tileLocations.GetLength(1); ++j)
+        //        if (player.transform.position == tileLocations[i, j])
+        //            return new Vector2(i, j);
+
+        for (int i = 0; i < tiles.GetLength(0); ++i)
+            for (int j = 0; j < tiles.GetLength(1); ++j)
+                if (playerTile == tiles[i, j])
                     return new Vector2(i, j);
         return Vector2.zero;
     }
@@ -53,23 +58,24 @@ public class BoardManager : MonoBehaviour, IBoardManager
     {
 
         // Get indices of player location's tiles
-        int i = 0, j = 0;
-        bool done = false;
-        for (i = 0; i < tiles.GetLength(0); ++i)
-        {
-            for (j = 0; j < tiles.GetLength(1); ++j)
-            {
-                if (playerTile == tiles[i, j])
-                {
-                    done = true;
-                    break;
-                }
-            }
-            if (done)
-                break;
-        }
+        //int i = 0, j = 0;
+        //bool done = false;
+        //for (i = 0; i < tiles.GetLength(0); ++i)
+        //{
+        //    for (j = 0; j < tiles.GetLength(1); ++j)
+        //    {
+        //        if (playerTile == tiles[i, j])
+        //        {
+        //            done = true;
+        //            break;
+        //        }
+        //    }
+        //    if (done)
+        //        break;
+        //}
+        Vector2 playerTileIndices = GetPlayerTileIndices();
 
-        GameObject attemptedTile = GetNextTile(i, j, direction);
+        GameObject attemptedTile = GetNextTile((int)playerTileIndices.x, (int)playerTileIndices.y, direction);
         if (attemptedTile)
         {
             if (attemptedTile.tag == obstacleTag)
@@ -77,8 +83,8 @@ public class BoardManager : MonoBehaviour, IBoardManager
                 Debug.Log("Obstacle tag detected.");
                 return false;
             }
-
-            StartCoroutine(playerController.SmoothMove(attemptedTile.transform.position));
+            else 
+                StartCoroutine(playerController.SmoothMove(attemptedTile.transform.position));
             // player.transform.position = attemptedTile.transform.position;
         }
         else
