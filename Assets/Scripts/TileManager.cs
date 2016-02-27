@@ -25,7 +25,7 @@ public class TileManager : MonoBehaviour
     {
         if (other.tag == "Player")
         {
-            if (this.tag == "Portal" && !exitReached)
+            if (this.tag == "Exit" && !exitReached)
             {
                 Debug.Log("Exit reached.");
                 FindObjectOfType<GameManager>().Invoke("LoadNext", 0.25f);

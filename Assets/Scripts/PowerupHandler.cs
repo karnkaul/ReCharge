@@ -31,7 +31,8 @@ public class PowerupHandler : MonoBehaviour
 
     void Update ()
     {
-        transform.Rotate(Vector3.forward * direction, rotator);
+        if (tag == "Powerup")
+            transform.Rotate(Vector3.forward * direction, rotator);
     }
 
     void OnTriggerEnter2D (Collider2D other)
@@ -41,7 +42,8 @@ public class PowerupHandler : MonoBehaviour
             if (other.tag == "Player")
             {
                 animator.SetTrigger("consumed");
-                gameManager.AddEnergy(2);
+                int energy = (tag == "Super") ? 11 : 2;
+                gameManager.AddEnergy(energy);
                 Destroy(this.gameObject, 0.5f);
                 consumed = true;
             }

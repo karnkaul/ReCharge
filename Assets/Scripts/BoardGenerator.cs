@@ -9,13 +9,13 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
     public int numTiles;
     public float tileSize, noiseSampleSize = 0.3f;
     public bool debugInitBoard = false;
-    public GameObject powerupPrefab;
+    public GameObject powerupPrefab, superPowerupPrefab;
     [Range(1.0f, 5.0f)]
-    public float powerupChance;
+    public float powerupChance, superChance;
 
     public GameObject[,] tileMap;
     [HideInInspector]
-    public List<GameObject> powerups;
+    public List<GameObject> powerups, supers;
 
     private bool tileSpawnComplete = false;
     public bool TileSpawnComplete
@@ -50,7 +50,13 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
     public void InitBoard()
     {
         float levelPowerupChance = powerupChance - (float)(GameManager.Level) / 2;
-        Debug.Log("Level powerup chance:" + levelPowerupChance);
+        float levelSuperChance = superChance - ((float)(GameManager.Level) / 2) * (superChance / powerupChance);
+
+        levelPowerupChance = Mathf.Clamp(levelPowerupChance, 1f, powerupChance);
+        levelSuperChance = Mathf.Clamp(levelSuperChance, 0.1f, superChance);
+
+        Debug.Log("Level " + GameManager.Level);
+        Debug.Log("powerup chance:" + levelPowerupChance + " super chance:" + levelSuperChance);
 
         // Freeze player for animation duartion (1s)
         gameManager.DisablePlayerController();
@@ -105,13 +111,22 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
                 // Dice roll instantiations
                 // Powerup
                 float roll = Random.Range(0.0f, 10.0f);
-                GameObject powerup;
+                GameObject powerup, super;
+
+                if (!noPowerup && levelSuperChance > roll && !tileOccupied)
+                {
+                    super = Instantiate(superPowerupPrefab, position, Quaternion.identity) as GameObject;
+                    super.transform.parent = tile.transform;
+                    super.name = "Super Powerup " + supers.Count;
+                    supers.Add(super);
+                    tileOccupied = true;
+                }
 
                 if (!noPowerup && levelPowerupChance > roll && !tileOccupied)
                 {
                     powerup = Instantiate(powerupPrefab, position, Quaternion.identity) as GameObject;
                     powerup.transform.parent = tile.transform;
-                    powerup.name = "Power Up " + powerups.Count;
+                    powerup.name = "Powerup " + powerups.Count;
                     powerups.Add(powerup);
                     tileOccupied = true;
                 }
@@ -128,7 +143,6 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
             }
         }
         boardManager.SetTileMap(tileMap);
-        Debug.Log("Level " + GameManager.Level);
     }
 
     void EnablePC ()
