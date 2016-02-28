@@ -5,8 +5,10 @@ public class TileManager : MonoBehaviour
 {
     public enum SpawnMode { Delayed, Instant };
     public SpawnMode spawnMode;
+    public AudioClip exitSFX;
 
     private bool exitReached;
+    private AudioSource audioSource;
 
     void Start ()
     {
@@ -19,6 +21,7 @@ public class TileManager : MonoBehaviour
                 break;
         }
         exitReached = false;
+        audioSource = FindObjectOfType<BoardManager>().GetComponent<AudioSource>();
     }
 
     void OnTriggerStay2D (Collider2D other)
@@ -28,6 +31,8 @@ public class TileManager : MonoBehaviour
             if (this.tag == "Exit" && !exitReached)
             {
                 Debug.Log("Exit reached.");
+                if (exitSFX)
+                    audioSource.PlayOneShot(exitSFX);
                 FindObjectOfType<GameManager>().Invoke("LoadNext", 0f);
                 exitReached = true;
             }

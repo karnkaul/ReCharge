@@ -3,12 +3,14 @@ using System.Collections;
 
 public class PowerupHandler : MonoBehaviour
 {
+    public AudioClip[] powerup, super;
+
     private bool consumed;
     private GameManager gameManager;
     private Animator animator;
-
     private int direction;
     private float rotator;
+    private AudioSource audioSource;
 
     void Start ()
     {
@@ -21,6 +23,8 @@ public class PowerupHandler : MonoBehaviour
         direction = (x > 5) ? -1 : 1;
 
         StartCoroutine(DelayedAnimate());
+
+        audioSource = GetComponent<AudioSource>();
     }
 
     IEnumerator DelayedAnimate ()
@@ -42,7 +46,17 @@ public class PowerupHandler : MonoBehaviour
             if (other.tag == "Player")
             {
                 animator.SetTrigger("consumed");
-                int energy = (tag == "Super") ? 11 : 2;
+                int energy = 2;
+                AudioClip x;
+                if (powerup.Length > 0)
+                    audioSource.PlayOneShot(powerup[Random.Range(0, powerup.Length)]);
+                if (tag == "Super")
+                {
+                    energy = 11;
+                    Debug.Log(super.Length);
+                    if (super.Length > 0)
+                        audioSource.PlayOneShot(super[Random.Range(0, super.Length)]);
+                }
                 gameManager.AddEnergy(energy);
                 Destroy(this.gameObject, 0.5f);
                 consumed = true;

@@ -6,10 +6,11 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public float levelLoadDelay = 1;
-    public Text energyText, levelText;
+    public Text energyText, levelText, restartText;
+    public CanvasGroup gameOverCanvas;
     public int initEnergyCount = 25;
 
-    private static bool exitReached = false;
+    private static bool gameOver = false;
     private static int level = 0;
     public static int Level
     {
@@ -43,7 +44,8 @@ public class GameManager : MonoBehaviour
         energyCount = initEnergyCount;
         playerController = FindObjectOfType<PlayerController>();
         energyText.text = energyCount.ToString();
-	}
+        gameOverCanvas.alpha = 0;
+    }
 
     public void AddEnergy (int count)
     {
@@ -70,7 +72,6 @@ public class GameManager : MonoBehaviour
         //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         boardGenerator.InitBoard();
         boardManager.ResetPlayer();
-        UpdateUI();
     }
 
 	public void DisablePlayerController ()
@@ -88,14 +89,36 @@ public class GameManager : MonoBehaviour
     void GameOver()
     {
         DisablePlayerController();
-        Debug.Log("Game Over.");
+        gameOver = true;
+        gameOverCanvas.alpha = 1;
+    }
+
+    void Restart ()
+    {
+        gameOver = false;
+        level = 0;
+        energyCount = initEnergyCount;
+        gameOverCanvas.alpha = 0;
+        boardGenerator.InitBoard();
+        boardManager.ResetPlayer();
     }
 
     void Update ()
     {
-        if (energyCount <= 0)
+        if (!gameOver)
         {
-            GameOver();
+            if (energyCount <= 0)
+            {
+                GameOver();
+            }
+        }
+
+        else
+        {
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                Restart();
+            }
         }
     }
 }

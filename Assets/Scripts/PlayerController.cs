@@ -7,11 +7,13 @@ public class PlayerController : MonoBehaviour
 
     [Range(20, 100)]
     public int moveSpeed = 50;
+    public AudioClip[] moveSFX, blockedSFX;
 
-    private bool moving = false;
+    private bool moving = false, disabled = false;
     private GameManager gameManager;
     private IBoardManager boardManager;
     private Animator animator;
+    private AudioSource audioSource;
 
     void OnEnable ()
     {
@@ -26,11 +28,13 @@ public class PlayerController : MonoBehaviour
     void EnableMovement ()
     {
         EventHandler.handleInput += AttemptMove;
+        disabled = false;
     }
 
     void DisableMovement ()
     {
         EventHandler.handleInput -= AttemptMove;
+        disabled = true;        
     }
 
     public void SubscribeDelegates ()
@@ -52,22 +56,34 @@ public class PlayerController : MonoBehaviour
         if (!gameManager)
             gameManager = FindObjectOfType<GameManager>();
         animator = GetComponent<Animator>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     void AttemptMove (Vector2 direction)
     {
-        if (!moving)
+        if (!disabled)
         {
-            if (!boardManager.AttemptMove(direction))
-                animator.SetTrigger("Blocked");
-            else gameManager.AddEnergy(-1);
+            if (!moving)
+            {
+                if (!boardManager.AttemptMove(direction))
+                {
+                    if (blockedSFX.Length > 0)
+                        audioSource.PlayOneShot(blockedSFX[Random.Range(0, blockedSFX.Length)]);
+                    animator.SetTrigger("Blocked");
+                }
+                else
+                {
+                    if (moveSFX.Length > 0)
+                        audioSource.PlayOneShot(moveSFX[Random.Range(0, moveSFX.Length)]);
+                    gameManager.AddEnergy(-1);
+                }
+            }
         }
     }
 
     public IEnumerator SmoothMove (Vector3 position)
     {
         moving = true;
-        DisableMovement();
         while (transform.position != position)
         { 
             transform.position = Vector3.Lerp(transform.position, position, 0.5f * Time.deltaTime * moveSpeed);
@@ -75,7 +91,6 @@ public class PlayerController : MonoBehaviour
                 transform.position = position;
             yield return null;
         }
-        EnableMovement();
         moving = false;
     }
 
