@@ -55,6 +55,7 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
         levelPowerupChance = Mathf.Clamp(levelPowerupChance, 1f, powerupChance);
         levelSuperChance = Mathf.Clamp(levelSuperChance, 0.1f, superChance);
 
+        gameManager.UpdateUI();
         Debug.Log("Level " + GameManager.Level);
         Debug.Log("powerup chance:" + levelPowerupChance + " super chance:" + levelSuperChance);
 

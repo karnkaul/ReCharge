@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public float levelLoadDelay = 1;
-    public Text energyText;
+    public Text energyText, levelText;
     public int initEnergyCount = 25;
 
     private static bool exitReached = false;
@@ -54,6 +54,7 @@ public class GameManager : MonoBehaviour
     public void UpdateUI ()
     {
         energyText.text = energyCount.ToString();
+        levelText.text = "Level " + (level + 1);
     }
 
     public void LoadNext ()
@@ -69,7 +70,7 @@ public class GameManager : MonoBehaviour
         //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         boardGenerator.InitBoard();
         boardManager.ResetPlayer();
-        playerController.enabled = true;
+        UpdateUI();
     }
 
 	public void DisablePlayerController ()
