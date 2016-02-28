@@ -50,7 +50,7 @@ public class GameManager : MonoBehaviour
     public void AddEnergy (int count)
     {
         energyCount += count;
-        Invoke("UpdateUI", 0.05f);
+        Invoke("UpdateUI", 0.1f);
     }
 
     public void UpdateUI ()
