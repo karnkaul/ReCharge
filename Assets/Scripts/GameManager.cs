@@ -10,7 +10,8 @@ public class GameManager : MonoBehaviour
     public CanvasGroup gameOverCanvas;
     public int initEnergyCount = 25, startLevel = 0;
 
-    private static bool gameOver = false;
+    public static bool gameOver = false;
+
     private static int level = 0;
     public static int Level
     {
@@ -52,8 +53,11 @@ public class GameManager : MonoBehaviour
 
     public void AddEnergy (int count)
     {
-        energyCount += count;
-        Invoke("UpdateUI", 0.1f);
+        if (!gameOver)
+        {
+            energyCount += count;
+            Invoke("UpdateUI", 0.1f);
+        }
     }
 
     public void UpdateUI ()
@@ -64,8 +68,12 @@ public class GameManager : MonoBehaviour
 
     public void LoadNext ()
     {
-        DisablePlayerController();
-        StartCoroutine(Load());
+        if (!gameOver)
+        {
+            boardGenerator.StopEnemies();
+            DisablePlayerController();
+            StartCoroutine(Load());
+        }
     }
 
 	IEnumerator Load ()
@@ -101,7 +109,7 @@ public class GameManager : MonoBehaviour
     void Restart ()
     {
         gameOver = false;
-        level = 0;
+        level = startLevel;
         energyCount = initEnergyCount;
         gameOverCanvas.alpha = 0;
         boardGenerator.InitBoard();
@@ -120,7 +128,7 @@ public class GameManager : MonoBehaviour
 
         else
         {
-            if (Input.GetKeyDown(KeyCode.R))
+            if (Input.anyKeyDown)
             {
                 Restart();
             }

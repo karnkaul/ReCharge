@@ -6,7 +6,6 @@ public class EnemyCollision : MonoBehaviour
     public Animator animator;
     public AudioClip killSound;
 
-    private static bool killed = false;
     private GameManager gameManager;
 
     void Start ()
@@ -16,7 +15,7 @@ public class EnemyCollision : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (!killed)
+        if (!GameManager.gameOver)
         {
             if (other.tag == "Player")
             {
@@ -24,9 +23,10 @@ public class EnemyCollision : MonoBehaviour
                 StartCoroutine(ExplodeAndGameOver());
                 other.GetComponent<PlayerController>().StopAllCoroutines();
                 other.gameObject.SetActive(false);
-                killed = true;
             }
         }
+        else
+            Debug.Log("Game is over.");
     }
 
     IEnumerator ExplodeAndGameOver()

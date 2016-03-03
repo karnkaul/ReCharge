@@ -13,24 +13,22 @@ public class EnemyController : MonoBehaviour
         public float SNR = 0.8f;
         [Range(0.5f, 2.0f)]
         public float cycleTime = 1.0f;
-        //[Range(10.0f, 20.0f)]
-        //public float lifetime = 10.0f;
         public float speed = 1.0f;
     }
     [SerializeField]
     public Properties properties;
 
-    private struct Triggers
+    public struct Triggers
     {
-        public bool destruct;
+        public bool destruct, freeze;
     }
-    private Triggers triggers;
+    public Triggers triggers;
 
-    private enum States { chasing, wandering, destructing };
+    private enum States { chasing, wandering, destructing, frozen };
     private States state;
     private Vector3 deltaPosition;
     private bool chase = true;
-    private float elapsed, cycleCounter;
+    private float cycleCounter;
     private Animator animator;
 
     // = chase or roam
@@ -42,9 +40,11 @@ public class EnemyController : MonoBehaviour
             target = GameObject.Find("Player");
 
         animator = GetComponentInChildren<Animator>();
+        int roll = Random.Range(0, 2);
+        GetComponentInChildren<SpriteRenderer>().flipX = (roll == 0) ? false : true;
 
         FuzzProperties();
-        elapsed = cycleCounter = 0;
+        cycleCounter = 0;
         state = States.wandering;
         ResetTriggers();
 	}
@@ -58,9 +58,8 @@ public class EnemyController : MonoBehaviour
     {
         float noise = 1.0f - properties.SNR;
         properties.cycleTime = FuzzProperty(properties.cycleTime);
-        //properties.lifetime = FuzzProperty(properties.lifetime);
-        properties.speed = properties.speed * ((float)(GameManager.Level + 1) / 10) + 1;
-        properties.speed = Mathf.Clamp(properties.speed, 0.2f, 3.0f);
+        properties.speed = properties.speed * ((float)(GameManager.Level + 1) / 5) + 1;
+        properties.speed = Mathf.Clamp(properties.speed, 0.2f, 4.0f);
     }
 
     float FuzzProperty (float property, float SNR=-1)
@@ -74,20 +73,18 @@ public class EnemyController : MonoBehaviour
     {
         // Timers
         cycleCounter += Time.deltaTime;
-        elapsed += Time.deltaTime;
         
-        //// Killswitch
-        //if (elapsed >= properties.lifetime)
-        //{
-        //    Debug.Log("destructing");
-        //    triggers.destruct = true;
-        //}
-
         if (triggers.destruct)
         { 
             StartCoroutine(SelfDestruct());
             state = States.destructing;
             ResetTriggers();
+        }
+
+        if (triggers.freeze)
+        {
+            state = States.frozen;
+            return;
         }
 
         // State switcher

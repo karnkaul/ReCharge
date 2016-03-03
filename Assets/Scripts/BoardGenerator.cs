@@ -48,12 +48,28 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
         }
     }
 
-    public void InitBoard()
+    public void StopEnemies ()
+    {
+        foreach (GameObject enemy in enemies)
+            enemy.GetComponent<EnemyController>().triggers.freeze = true;
+    }
+
+    public void InitBoard(bool restart = false)
     {
         if (!player)
             player = GameObject.Find("Player");
-        if (!player.activeSelf)
+        if (restart)
+        {
+            if (player)
+                Destroy(player);
+            player = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity) as GameObject;
+        }
+        else if (!player.activeSelf)
             player.SetActive(true);
+
+        PlayerController playerController = player.GetComponent<PlayerController>();
+        playerController.moveSpeed += GameManager.Level / 2;
+        playerController.moveSpeed = (int)Mathf.Clamp(playerController.moveSpeed, 30.0f, 50.0f);
         //if (!player)
         //    player = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity) as GameObject;
 

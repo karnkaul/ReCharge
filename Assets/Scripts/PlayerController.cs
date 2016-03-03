@@ -5,8 +5,8 @@ public class PlayerController : MonoBehaviour
 { 
     public GameObject board;
 
-    [Range(20, 100)]
-    public int moveSpeed = 50;
+    [Range(20, 50)]
+    public int moveSpeed = 35;
     public AudioClip[] moveSFX, blockedSFX;
 
     private bool moving = false, disabled = false;

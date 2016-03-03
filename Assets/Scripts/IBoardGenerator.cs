@@ -3,5 +3,6 @@ using System.Collections;
 
 public interface IBoardGenerator
 {
-    void InitBoard();
+    void InitBoard(bool restart = false);
+    void StopEnemies();
 }
