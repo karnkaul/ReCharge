@@ -59,7 +59,8 @@ public class EnemyController : MonoBehaviour
         float noise = 1.0f - properties.SNR;
         properties.cycleTime = FuzzProperty(properties.cycleTime);
         //properties.lifetime = FuzzProperty(properties.lifetime);
-        properties.speed = FuzzProperty(properties.speed);
+        properties.speed = properties.speed * ((float)(GameManager.Level + 1) / 10) + 1;
+        properties.speed = Mathf.Clamp(properties.speed, 0.2f, 3.0f);
     }
 
     float FuzzProperty (float property, float SNR=-1)

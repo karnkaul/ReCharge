@@ -57,15 +57,19 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
         //if (!player)
         //    player = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity) as GameObject;
 
+        enemies.Clear();
+
         float levelPowerupChance = powerupChance - (float)(GameManager.Level) / 2;
         float levelSuperChance = superChance - ((float)(GameManager.Level) / 2) * (superChance / powerupChance);
+        float enemyChance = 2 * (((float)(GameManager.Level + 1)/2) - 1);
+        enemyChance = Mathf.Clamp(enemyChance, 0.0f, 3.0f);
 
         levelPowerupChance = Mathf.Clamp(levelPowerupChance, 1f, powerupChance);
         levelSuperChance = Mathf.Clamp(levelSuperChance, 0.1f, superChance);
 
         gameManager.UpdateUI();
         Debug.Log("Level " + GameManager.Level);
-        Debug.Log("powerup chance:" + levelPowerupChance + " super chance:" + levelSuperChance);
+        Debug.Log("powerup chance:" + levelPowerupChance + " super chance:" + levelSuperChance + " enemy chance:" + enemyChance);
 
         // Freeze player for animation duartion (1s)
         gameManager.DisablePlayerController();
@@ -79,6 +83,7 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
         offsetY = Random.Range(0.0f, 10.0f - (2 * noiseSampleSize));
         for (int i = 0; i < numTiles; ++i)
         {
+            int superroll = Random.Range(0, numTiles);
             for (int j = 0; j < numTiles; ++j)
             {
                 Renderer rend = tiles[0].GetComponent<Renderer>();
@@ -141,17 +146,31 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
                 }
 
                 // Enemy
-                roll = Random.Range(0.0f, 10.0f);
-                if (!tileOccupied && roll > 12)
+                if (enemyChance > 0)
                 {
-                    tileOccupied = true;
+                    if (j == superroll)
+                    {
+                        if (enemyChance >= 3 && i == numTiles / 3)
+                            InstantiateEnemy(position, tile);
+                        if (enemyChance >= 2 && i == numTiles / 2)
+                            InstantiateEnemy(position, tile);
+                        if (enemyChance >= 1 && i == (2 * (numTiles / 3)))
+                            InstantiateEnemy(position, tile);
+                    }
                 }
-
                 // Flush
-                tile = powerup = null;
+                tile = powerup = super = null;
             }
         }
         boardManager.SetTileMap(tileMap);
+    }
+
+    void InstantiateEnemy (Vector3 position, GameObject tile)
+    {
+        GameObject enemy = Instantiate(enemyPrefab, position, Quaternion.identity) as GameObject;
+        enemy.transform.parent = tile.transform;
+        enemy.name = "Enemy " + enemies.Count;
+        enemies.Add(enemy);
     }
 
     void EnablePC ()

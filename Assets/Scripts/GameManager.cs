@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
     public float levelLoadDelay = 1;
     public Text energyText, levelText, restartText;
     public CanvasGroup gameOverCanvas;
-    public int initEnergyCount = 25;
+    public int initEnergyCount = 25, startLevel = 0;
 
     private static bool gameOver = false;
     private static int level = 0;
@@ -47,6 +47,7 @@ public class GameManager : MonoBehaviour
         Debug.Log(playerController.name);
         energyText.text = energyCount.ToString();
         gameOverCanvas.alpha = 0;
+        level = startLevel;
     }
 
     public void AddEnergy (int count)
@@ -58,7 +59,7 @@ public class GameManager : MonoBehaviour
     public void UpdateUI ()
     {
         energyText.text = energyCount.ToString();
-        levelText.text = "Level " + (level + 1);
+        levelText.text = (level + 1).ToString();
     }
 
     public void LoadNext ()
