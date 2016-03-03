@@ -9,13 +9,13 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
     public int numTiles;
     public float tileSize, noiseSampleSize = 0.3f;
     public bool debugInitBoard = false;
-    public GameObject powerupPrefab, superPowerupPrefab;
+    public GameObject powerupPrefab, superPowerupPrefab, enemyPrefab, playerPrefab;
     [Range(1.0f, 5.0f)]
     public float powerupChance, superChance;
 
     public GameObject[,] tileMap;
     [HideInInspector]
-    public List<GameObject> powerups, supers;
+    public List<GameObject> powerups, supers, enemies;
 
     private bool tileSpawnComplete = false;
     public bool TileSpawnComplete
@@ -29,6 +29,7 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
     private float offsetX, offsetY;
     private IBoardManager boardManager;
     private GameManager gameManager;
+    private GameObject player;
 
     void Start ()
     {
@@ -49,6 +50,13 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
 
     public void InitBoard()
     {
+        if (!player)
+            player = GameObject.Find("Player");
+        if (!player.activeSelf)
+            player.SetActive(true);
+        //if (!player)
+        //    player = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity) as GameObject;
+
         float levelPowerupChance = powerupChance - (float)(GameManager.Level) / 2;
         float levelSuperChance = superChance - ((float)(GameManager.Level) / 2) * (superChance / powerupChance);
 

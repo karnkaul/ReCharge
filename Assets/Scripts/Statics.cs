@@ -3,6 +3,8 @@ using System.Collections;
 
 public class Statics : MonoBehaviour
 {
+    public delegate void Void();
+
     public static float fadeDuration = 1.0f;
 
     public static IEnumerator FadeIn(Renderer rend)
