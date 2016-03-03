@@ -42,7 +42,9 @@ public class GameManager : MonoBehaviour
         boardGenerator = GameObject.Find("Board").GetComponent<IBoardGenerator>();
 
         energyCount = initEnergyCount;
-        playerController = FindObjectOfType<PlayerController>();
+        //playerController = FindObjectOfType<PlayerController>();
+        playerController = GameObject.Find("Player").GetComponent<PlayerController>();
+        Debug.Log(playerController.name);
         energyText.text = energyCount.ToString();
         gameOverCanvas.alpha = 0;
     }

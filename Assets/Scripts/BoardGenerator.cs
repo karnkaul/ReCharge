@@ -30,7 +30,7 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
     private IBoardManager boardManager;
     private GameManager gameManager;
 
-    void Awake ()
+    void Start ()
     {
         boardManager = GetComponent(typeof(IBoardManager)) as IBoardManager;
         gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
