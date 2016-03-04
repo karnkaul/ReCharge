@@ -6,14 +6,23 @@ public class EventHandler : MonoBehaviour
     public enum InputType { Buttons, Axes };
     public InputType inputType;
 
-    public delegate void HandleInput (Vector2 direction);
+    public delegate void HandleInput(Vector2 direction);
     public static HandleInput handleInput;
     //public static event Void AttemptMove;
 
     private delegate void _HandleInput();
     private _HandleInput _handleInput;
 
-    void Start ()
+    private bool W;
+    private bool A;
+    private bool S;
+    private bool D;
+    private bool Up;
+    private bool Down;
+    private bool Left;
+    private bool Right;
+
+    void Start()
     {
         switch (inputType)
         {
@@ -24,14 +33,28 @@ public class EventHandler : MonoBehaviour
                 _handleInput = ButtonInput;
                 break;
         }
+
     }
 
-    void Update ()
+    void SetButtons ()
     {
+        W = Input.GetKeyDown(KeyCode.W);
+        A = Input.GetKeyDown(KeyCode.A);
+        S = Input.GetKeyDown(KeyCode.S);
+        D = Input.GetKeyDown(KeyCode.D);
+        Up = Input.GetKeyDown(KeyCode.UpArrow);
+        Down = Input.GetKeyDown(KeyCode.DownArrow);
+        Left = Input.GetKeyDown(KeyCode.LeftArrow);
+        Right = Input.GetKeyDown(KeyCode.RightArrow);
+    }
+
+    void Update()
+    {
+        SetButtons();
         _handleInput();
     }
 
-    void AxisInput ()
+    void AxisInput()
     {
         int horizontal = (int)Input.GetAxisRaw("Horizontal");
         int vertical = (int)Input.GetAxisRaw("Vertical");
@@ -46,17 +69,17 @@ public class EventHandler : MonoBehaviour
         }
     }
 
-    void ButtonInput ()
+    void ButtonInput()
     {
         short x = 0, y = 0;
 
-        if (Input.GetKeyDown(KeyCode.W))
+        if (Up || W)
             y = 1;
-        else if (Input.GetKeyDown(KeyCode.S))
+        else if (Down || S)
             y = -1;
-        else if (Input.GetKeyDown(KeyCode.A))
+        if (Left || A)
             x = -1;
-        else if (Input.GetKeyDown(KeyCode.D))
+        else if (Right || D)
             x = 1;
 
         Vector2 direction = new Vector2(x, y);

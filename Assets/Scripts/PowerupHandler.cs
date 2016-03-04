@@ -53,7 +53,7 @@ public class PowerupHandler : MonoBehaviour
                 if (tag == "Super")
                 {
                     energy = Random.Range(4, 12);
-                    Debug.Log(super.Length);
+                    Debug.Log("Super:" + super.Length);
                     if (super.Length > 0)
                         audioSource.PlayOneShot(super[Random.Range(0, super.Length)]);
                 }

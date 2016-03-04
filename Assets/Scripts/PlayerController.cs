@@ -7,13 +7,16 @@ public class PlayerController : MonoBehaviour
 
     [Range(20, 50)]
     public int moveSpeed = 35;
+    public float inputDelay = 0.01f;
     public AudioClip[] moveSFX, blockedSFX;
 
     private bool moving = false, disabled = false;
+    private float elapsed;
     private GameManager gameManager;
     private IBoardManager boardManager;
     private Animator animator;
     private AudioSource audioSource;
+    private Vector2[] moves = new Vector2[3]; //{ Vector2.zero, Vector2.zero, Vector2.zero };
 
     void OnEnable ()
     {
@@ -59,25 +62,58 @@ public class PlayerController : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
     }
 
-    void AttemptMove (Vector2 direction)
+    void AttemptMove(Vector2 direction)
     {
         if (!disabled)
         {
-            if (!moving)
+            if (elapsed >= inputDelay)
             {
-                if (!boardManager.AttemptMove(direction))
+                if (moves[moves.Length - 1] == Vector2.zero)
                 {
-                    if (blockedSFX.Length > 0)
-                        audioSource.PlayOneShot(blockedSFX[Random.Range(0, blockedSFX.Length)]);
-                    animator.SetTrigger("Blocked");
+                    int index;
+                    for (index = 0; index < moves.Length; ++index)
+                        if (moves[index] == Vector2.zero)
+                            break;
+
+                    moves[index] = direction;
+
+                    for (index = 0; index < moves.Length; ++index)
+                        if (moves[index] != Vector2.zero)
+                            Debug.Log(index + ":" + moves[index]);
                 }
-                else
-                {
-                    if (moveSFX.Length > 0)
-                        audioSource.PlayOneShot(moveSFX[Random.Range(0, moveSFX.Length)]);
-                    gameManager.AddEnergy(-1);
-                }
+                elapsed = 0;
             }
+        }
+    }
+
+    // Time sensitive
+    void ExecuteMove ()
+    {
+        // Double safety
+        if (moves[0] != Vector2.zero)
+        {
+            if (!boardManager.AttemptMove(moves[0]))
+            {
+                if (blockedSFX.Length > 0)
+                    audioSource.PlayOneShot(blockedSFX[Random.Range(0, blockedSFX.Length)]);
+                animator.SetTrigger("Blocked");
+            }
+            else
+            {
+                if (moveSFX.Length > 0)
+                    audioSource.PlayOneShot(moveSFX[Random.Range(0, moveSFX.Length)]);
+                gameManager.AddEnergy(-1);
+            }
+            moves[0] = Vector2.zero;
+        }
+        
+        // Push back
+        if (moves[1] != Vector2.zero)
+        for (int i = 1; i < moves.Length; ++i)
+        {
+            moves[i-1] = moves[i];
+            if (i == moves.Length - 1)
+                moves[i] = Vector2.zero;
         }
     }
 
@@ -96,6 +132,10 @@ public class PlayerController : MonoBehaviour
 
     void Update ()
     {
+        elapsed += Time.deltaTime;
+
+        if (moves[0] != Vector2.zero && !moving) 
+            ExecuteMove();
     }
 }
 
