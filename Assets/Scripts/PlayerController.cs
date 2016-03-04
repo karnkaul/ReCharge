@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour
 
     [Range(20, 50)]
     public int moveSpeed = 35;
-    public float inputDelay = 0.01f;
+    public float _inputDelay = 0.1f;
     public AudioClip[] moveSFX, blockedSFX;
 
     private bool moving = false, disabled = false;
@@ -17,7 +17,8 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
     private AudioSource audioSource;
     private EventHandler eventHandler;
-    private Vector2[] moves = new Vector2[2]; //{ Vector2.zero, Vector2.zero, Vector2.zero };
+    private Vector2[] moves = new Vector2[2];
+    private float inputDelay;
 
     void OnEnable ()
     {
@@ -62,6 +63,8 @@ public class PlayerController : MonoBehaviour
         animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
         eventHandler = FindObjectOfType<EventHandler>();
+
+        inputDelay = _inputDelay;
     }
 
     void AttemptMove(Vector2 direction)
@@ -69,9 +72,11 @@ public class PlayerController : MonoBehaviour
         
         if (!disabled)
         {
-            if (eventHandler.inputType == EventHandler.InputType.Buttons)
+            
+            if (elapsed >= inputDelay)
             {
-                if (elapsed >= inputDelay)
+                // Single input
+                if (eventHandler.inputType == EventHandler.InputType.Buttons)
                 {
                     if (moves[moves.Length - 1] == Vector2.zero)
                     {
@@ -86,11 +91,15 @@ public class PlayerController : MonoBehaviour
                             if (moves[index] != Vector2.zero)
                                 Debug.Log(index + ":" + moves[index]);
                     }
-                    elapsed = 0;
+                    
                 }
+                // Turbo input
+                else
+                    moves[0] = direction;
+
+                elapsed = 0;
             }
-            else
-                moves[0] = direction;
+          
         }
     }
 
