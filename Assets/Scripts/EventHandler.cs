@@ -1,10 +1,12 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class EventHandler : MonoBehaviour
 {
     public enum InputType { Buttons, Axes };
     public InputType inputType;
+    public Dropdown inputTypeDropdown;
 
     public delegate void HandleInput(Vector2 direction);
     public static HandleInput handleInput;
@@ -34,6 +36,24 @@ public class EventHandler : MonoBehaviour
                 break;
         }
 
+    }
+
+    public void SetControllerType()
+    {
+        if (inputTypeDropdown)
+        {
+            switch (inputTypeDropdown.value)
+            {
+                case 1:
+                    _handleInput = AxisInput;
+                    inputType = InputType.Axes;
+                    break;
+                default:
+                    _handleInput = ButtonInput;
+                    inputType = InputType.Buttons;
+                    break;
+            }
+        }
     }
 
     void SetButtons ()

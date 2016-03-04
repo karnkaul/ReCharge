@@ -16,7 +16,8 @@ public class PlayerController : MonoBehaviour
     private IBoardManager boardManager;
     private Animator animator;
     private AudioSource audioSource;
-    private Vector2[] moves = new Vector2[3]; //{ Vector2.zero, Vector2.zero, Vector2.zero };
+    private EventHandler eventHandler;
+    private Vector2[] moves = new Vector2[2]; //{ Vector2.zero, Vector2.zero, Vector2.zero };
 
     void OnEnable ()
     {
@@ -60,29 +61,36 @@ public class PlayerController : MonoBehaviour
             gameManager = FindObjectOfType<GameManager>();
         animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
+        eventHandler = FindObjectOfType<EventHandler>();
     }
 
     void AttemptMove(Vector2 direction)
     {
+        
         if (!disabled)
         {
-            if (elapsed >= inputDelay)
+            if (eventHandler.inputType == EventHandler.InputType.Buttons)
             {
-                if (moves[moves.Length - 1] == Vector2.zero)
+                if (elapsed >= inputDelay)
                 {
-                    int index;
-                    for (index = 0; index < moves.Length; ++index)
-                        if (moves[index] == Vector2.zero)
-                            break;
+                    if (moves[moves.Length - 1] == Vector2.zero)
+                    {
+                        int index;
+                        for (index = 0; index < moves.Length; ++index)
+                            if (moves[index] == Vector2.zero)
+                                break;
 
-                    moves[index] = direction;
+                        moves[index] = direction;
 
-                    for (index = 0; index < moves.Length; ++index)
-                        if (moves[index] != Vector2.zero)
-                            Debug.Log(index + ":" + moves[index]);
+                        for (index = 0; index < moves.Length; ++index)
+                            if (moves[index] != Vector2.zero)
+                                Debug.Log(index + ":" + moves[index]);
+                    }
+                    elapsed = 0;
                 }
-                elapsed = 0;
             }
+            else
+                moves[0] = direction;
         }
     }
 
