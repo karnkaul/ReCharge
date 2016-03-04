@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     public int moveSpeed = 35;
     public float _inputDelay = 0.1f;
     public AudioClip[] moveSFX, blockedSFX;
+    public bool showDebug = false;
 
     private bool moving = false, disabled = false;
     private float elapsed;
@@ -78,6 +79,7 @@ public class PlayerController : MonoBehaviour
                 // Single input
                 if (eventHandler.inputType == EventHandler.InputType.Buttons)
                 {
+                    // Cache one overflow
                     if (moves[moves.Length - 1] == Vector2.zero)
                     {
                         int index;
@@ -87,7 +89,8 @@ public class PlayerController : MonoBehaviour
 
                         moves[index] = direction;
 
-                        for (index = 0; index < moves.Length; ++index)
+                        if (showDebug)
+                            for (index = 0; index < moves.Length; ++index)
                             if (moves[index] != Vector2.zero)
                                 Debug.Log(index + ":" + moves[index]);
                     }
@@ -124,7 +127,7 @@ public class PlayerController : MonoBehaviour
             moves[0] = Vector2.zero;
         }
         
-        // Push back
+        // Pseudo-queue Push back
         if (moves[1] != Vector2.zero)
         for (int i = 1; i < moves.Length; ++i)
         {

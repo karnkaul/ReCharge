@@ -47,13 +47,12 @@ public class PowerupHandler : MonoBehaviour
             {
                 animator.SetTrigger("consumed");
                 int energy = 2;
-                AudioClip x;
                 if (powerup.Length > 0)
                     audioSource.PlayOneShot(powerup[Random.Range(0, powerup.Length)]);
                 if (tag == "Super")
                 {
                     energy = Random.Range(4, 12);
-                    Debug.Log("Super:" + super.Length);
+                    Debug.Log("Super:" + energy);
                     if (super.Length > 0)
                         audioSource.PlayOneShot(super[Random.Range(0, super.Length)]);
                 }

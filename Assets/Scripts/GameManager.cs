@@ -6,11 +6,11 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public float levelLoadDelay = 1;
-    public Text energyText, levelText, restartText;
+    public Text energyText, levelText, restartText, gameOverText;
     public CanvasGroup gameOverCanvas;
     public int initEnergyCount = 25, startLevel = 0;
 
-    public static bool gameOver = false;
+    public static bool gameOver = false, paused = false;
 
     private static int level = 0;
     public static int Level
@@ -43,9 +43,8 @@ public class GameManager : MonoBehaviour
         boardGenerator = GameObject.Find("Board").GetComponent<IBoardGenerator>();
 
         energyCount = initEnergyCount;
-        //playerController = FindObjectOfType<PlayerController>();
-        playerController = GameObject.Find("Player").GetComponent<PlayerController>();
-        Debug.Log(playerController.name);
+        playerController = FindObjectOfType<PlayerController>();
+        //playerController = GameObject.Find("Player").GetComponent<PlayerController>();
         energyText.text = energyCount.ToString();
         gameOverCanvas.alpha = 0;
         level = startLevel;
@@ -103,7 +102,18 @@ public class GameManager : MonoBehaviour
     {
         DisablePlayerController();
         gameOver = true;
+        gameOverText.text = "Game Over";
+        restartText.text = "Press any key to restart";
         gameOverCanvas.alpha = 1;
+    }
+
+    void TogglePause (bool pause)
+    {
+        gameOverText.text = "Paused";
+        restartText.text = "Press Space to continue";
+        gameOverCanvas.alpha = (pause) ? 1 : 0;
+        Time.timeScale = (pause) ? 0 : 1;
+        paused = pause;
     }
 
     void Restart ()
@@ -123,6 +133,22 @@ public class GameManager : MonoBehaviour
             if (energyCount <= 0)
             {
                 GameOver();
+            }
+
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                //if (!paused)
+                //{
+                //    Time.timeScale = 0;
+                //    paused = true;
+                //    Debug.Log("paused?");
+                //}
+                //else
+                //{
+                //    Time.timeScale = 1;
+                //    paused = false;
+                //}
+                TogglePause(!paused);
             }
         }
 
