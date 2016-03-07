@@ -6,7 +6,6 @@ public class PowerupHandler : MonoBehaviour
     public AudioClip[] powerup, super;
 
     private bool consumed;
-    private GameManager gameManager;
     private Animator animator;
     private int direction;
     private float rotator;
@@ -14,7 +13,6 @@ public class PowerupHandler : MonoBehaviour
 
     void Start ()
     {
-        gameManager = FindObjectOfType<GameManager>();
         animator = GetComponent<Animator>();
         StartCoroutine(Statics.FadeIn(this.GetComponent<Renderer>()));
 
@@ -56,7 +54,7 @@ public class PowerupHandler : MonoBehaviour
                     if (super.Length > 0)
                         audioSource.PlayOneShot(super[Random.Range(0, super.Length)]);
                 }
-                gameManager.AddEnergy(energy);
+                GameManager.AddEnergy(energy);
                 Destroy(this.gameObject, 0.5f);
                 consumed = true;
             }

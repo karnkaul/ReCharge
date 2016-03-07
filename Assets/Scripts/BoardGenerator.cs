@@ -4,18 +4,31 @@ using System.Collections.Generic;
 
 public class BoardGenerator : MonoBehaviour, IBoardGenerator
 {
-    public GameObject[] tiles;
-    public GameObject exitTile;
-    public int numTiles;
-    public float tileSize, noiseSampleSize = 0.3f;
-    public bool debugInitBoard = false;
-    public GameObject powerupPrefab, superPowerupPrefab, enemyPrefab, playerPrefab;
-    [Range(1.0f, 5.0f)]
-    public float powerupChance, superChance;
+    // Tiles
+    [SerializeField] [Header("Tiles")]
+    private GameObject[] tiles;
+    [SerializeField]
+    private GameObject exitTile;
+    [SerializeField]
+    private int numTiles = 10;
+    [SerializeField]
+    private float tileSize = 5, noiseSampleSize = 0.3f;
 
+    // Powerups
+    [Header("Powerups")]
+    public GameObject powerupPrefab;
+    public GameObject superPowerupPrefab, enemyPrefab, playerPrefab;
+    [Range(1.0f, 5.0f)]
+    public float powerupChance = 5, superChance = 1;
+
+    // Publics
     public GameObject[,] tileMap;
     [HideInInspector]
     public List<GameObject> powerups, supers, enemies;
+
+    // Debug
+    [Header("Debug")]
+    public bool debugInitBoard = false;
 
     private bool tileSpawnComplete = false;
     public bool TileSpawnComplete
@@ -28,13 +41,11 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
 
     private float offsetX, offsetY;
     private IBoardManager boardManager;
-    private GameManager gameManager;
     private GameObject player;
 
     void Start ()
     {
         boardManager = GetComponent(typeof(IBoardManager)) as IBoardManager;
-        gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
         tileMap = new GameObject[numTiles, numTiles];
         InitBoard();
     }
@@ -70,8 +81,6 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
         PlayerController playerController = player.GetComponent<PlayerController>();
         playerController.moveSpeed += GameManager.Level / 2;
         playerController.moveSpeed = (int)Mathf.Clamp(playerController.moveSpeed, 30.0f, 50.0f);
-        //if (!player)
-        //    player = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity) as GameObject;
 
         enemies.Clear();
 
@@ -83,12 +92,11 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
         levelPowerupChance = Mathf.Clamp(levelPowerupChance, 1f, powerupChance);
         levelSuperChance = Mathf.Clamp(levelSuperChance, 0.1f, superChance);
 
-        gameManager.UpdateUI();
         Debug.Log("Level " + GameManager.Level);
         Debug.Log("powerup chance:" + levelPowerupChance + " super chance:" + levelSuperChance + " enemy chance:" + enemyChance);
 
         // Freeze player for animation duartion (1s)
-        gameManager.DisablePlayerController();
+        GameManager.DisablePC();
         Invoke("EnablePC", Statics.fadeDuration);
 
         // Flush all children
@@ -191,7 +199,7 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
 
     void EnablePC ()
     {
-        gameManager.EnablePlayerController();
+        GameManager.EnablePC();
     }
 
     int getNoisyTileNumber(int x, int y, float scale)

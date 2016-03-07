@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour
     public int initEnergyCount = 25, startLevel = 0;
 
     public static bool gameOver = false, paused = false;
+    public static Statics.Void EnablePC, DisablePC, UpdateUI, SetGameOver;
+    public static Statics.VoidInt AddEnergy;
 
     private static int level = 0;
     public static int Level
@@ -25,6 +27,23 @@ public class GameManager : MonoBehaviour
     private PlayerController playerController;
     private IBoardGenerator boardGenerator;
     private IBoardManager boardManager;
+
+    void OnEnable ()
+    {
+        EnablePC += EnablePlayerController;
+        DisablePC += DisablePlayerController;
+        UpdateUI += _UpdateUI;
+        AddEnergy += _AddEnergy;
+        SetGameOver += GameOver;
+    }
+    void OnDisable()
+    {
+        EnablePC -= EnablePlayerController;
+        DisablePC -= DisablePlayerController;
+        UpdateUI -= _UpdateUI;
+        AddEnergy -= _AddEnergy;
+        SetGameOver -= GameOver;
+    }
 
     void Awake()
     {
@@ -50,17 +69,23 @@ public class GameManager : MonoBehaviour
         level = startLevel;
     }
 
-    public void AddEnergy (int count)
+    void _AddEnergy (int count)
     {
         if (!gameOver)
         {
             energyCount += count;
-            Invoke("UpdateUI", 0.1f);
+            UpdateUI();
         }
     }
 
-    public void UpdateUI ()
+    void _UpdateUI ()
     {
+        StartCoroutine(DelayedUIUpdate());
+    }
+
+    IEnumerator DelayedUIUpdate ()
+    {
+        yield return new WaitForSeconds(0.1f);
         energyText.text = energyCount.ToString();
         levelText.text = (level + 1).ToString();
     }
@@ -82,17 +107,19 @@ public class GameManager : MonoBehaviour
         //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         boardGenerator.InitBoard();
         boardManager.ResetPlayer();
+        UpdateUI();
     }
 
-	public void DisablePlayerController ()
+	void DisablePlayerController ()
     {
-        //playerController.UnsubscirbeDelegates();
+        //PlayerController.DisableMovement();
         if (playerController)
             playerController.enabled = false;
     }
 
-    public void EnablePlayerController ()
+    void EnablePlayerController ()
     {
+        //PlayerController.EnableMovement();
         //playerController.SubscribeDelegates();
         if(playerController)
             playerController.enabled = true;

@@ -5,15 +5,22 @@ public class PlayerController : MonoBehaviour
 { 
     public GameObject board;
 
-    [Range(20, 50)]
+    [Range(20, 50)] [Header("Input")]
     public int moveSpeed = 35;
     public float _inputDelay = 0.1f;
-    public AudioClip[] moveSFX, blockedSFX;
-    public bool showDebug = false;
+
+    [Header("Audio")]
+    public AudioClip[] moveSFX;
+    public AudioClip[] blockedSFX;
+
+    [Header("Debug")]
+    public bool printDebugToLog = false;
+
+    //public static Statics.Void EnableMovement, DisableMovement;
+    public static Statics.VoidV3 SmoothMove;
 
     private bool moving = false, disabled = false;
     private float elapsed;
-    private GameManager gameManager;
     private IBoardManager boardManager;
     private Animator animator;
     private AudioSource audioSource;
@@ -28,7 +35,7 @@ public class PlayerController : MonoBehaviour
 
     void OnDisable ()
     {
-        UnsubscirbeDelegates();
+        UnsubscribeDelegates();
     }
 
     void EnableMovement ()
@@ -45,11 +52,14 @@ public class PlayerController : MonoBehaviour
 
     public void SubscribeDelegates ()
     {
+        SmoothMove += __SmoothMove;
         EnableMovement();
+        
     }
 
-    public void UnsubscirbeDelegates ()
+    public void UnsubscribeDelegates ()
     {
+        SmoothMove -= __SmoothMove;
         DisableMovement();
     }
 
@@ -59,8 +69,6 @@ public class PlayerController : MonoBehaviour
             boardManager = (IBoardManager)board.GetComponent<IBoardManager>();
         else
             boardManager = (IBoardManager)GameObject.Find("Board").GetComponent<IBoardManager>();
-        if (!gameManager)
-            gameManager = FindObjectOfType<GameManager>();
         animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
         eventHandler = FindObjectOfType<EventHandler>();
@@ -77,9 +85,9 @@ public class PlayerController : MonoBehaviour
             if (elapsed >= inputDelay)
             {
                 // Single input
-                if (eventHandler.inputType == EventHandler.InputType.Buttons)
+                if (EventHandler.inputType == Statics.InputType.Buttons)
                 {
-                    // Cache one overflow
+                    // Cache (moves.Length-1) overflows
                     if (moves[moves.Length - 1] == Vector2.zero)
                     {
                         int index;
@@ -89,13 +97,14 @@ public class PlayerController : MonoBehaviour
 
                         moves[index] = direction;
 
-                        if (showDebug)
+                        if (printDebugToLog)
                             for (index = 0; index < moves.Length; ++index)
                             if (moves[index] != Vector2.zero)
                                 Debug.Log(index + ":" + moves[index]);
                     }
                     
                 }
+
                 // Turbo input
                 else
                     moves[0] = direction;
@@ -122,12 +131,12 @@ public class PlayerController : MonoBehaviour
             {
                 if (moveSFX.Length > 0)
                     audioSource.PlayOneShot(moveSFX[Random.Range(0, moveSFX.Length)]);
-                gameManager.AddEnergy(-1);
+                GameManager.AddEnergy(-1);
             }
             moves[0] = Vector2.zero;
         }
         
-        // Pseudo-queue Push back
+        // Pseudo-dequeue
         if (moves[1] != Vector2.zero)
         for (int i = 1; i < moves.Length; ++i)
         {
@@ -137,7 +146,13 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public IEnumerator SmoothMove (Vector3 position)
+    // Delegate helper
+    void __SmoothMove(Vector3 position)
+    {
+        StartCoroutine(_SmoothMove(position));
+    }
+
+    IEnumerator _SmoothMove (Vector3 position)
     {
         moving = true;
         while (transform.position != position)

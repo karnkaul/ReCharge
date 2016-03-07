@@ -6,12 +6,7 @@ public class EnemyCollision : MonoBehaviour
     public Animator animator;
     public AudioClip killSound;
 
-    private GameManager gameManager;
-
-    void Start ()
-    {
-        gameManager = FindObjectOfType<GameManager>();
-    }
+    private AudioSource audioSource;
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -19,7 +14,7 @@ public class EnemyCollision : MonoBehaviour
         {
             if (other.tag == "Player")
             {
-                gameManager.GetComponent<AudioSource>().PlayOneShot(killSound);
+                GameObject.Find("AudioSource").GetComponent<AudioSource>().PlayOneShot(killSound);
                 StartCoroutine(ExplodeAndGameOver());
                 other.GetComponent<PlayerController>().StopAllCoroutines();
                 other.gameObject.SetActive(false);
@@ -35,7 +30,7 @@ public class EnemyCollision : MonoBehaviour
             animator.SetTrigger("explode");
         
         yield return new WaitForSeconds(1);
-        gameManager.GameOver();
+        GameManager.SetGameOver();
         if (this)
             Destroy(this.transform.parent.gameObject);
     }

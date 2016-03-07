@@ -4,16 +4,19 @@ using UnityEngine.UI;
 
 public class EventHandler : MonoBehaviour
 {
-    public enum InputType { Buttons, Axes };
-    public InputType inputType;
+    public static Statics.InputType inputType;
     public Dropdown inputTypeDropdown;
 
+    // For PlayerController etc to latch on to.
     public delegate void HandleInput(Vector2 direction);
     public static HandleInput handleInput;
-    //public static event Void AttemptMove;
 
+    // For self evaluation
     private delegate void _HandleInput();
     private _HandleInput _handleInput;
+
+    // Singleton
+    private static EventHandler instance;
 
     private bool W;
     private bool A;
@@ -24,11 +27,17 @@ public class EventHandler : MonoBehaviour
     private bool Left;
     private bool Right;
 
-    void Start()
+    void Awake ()
     {
+        // Singleton
+        if (!instance)
+            instance = this;
+        if (instance != this)
+            Destroy(gameObject);
+
         switch (inputType)
         {
-            case InputType.Axes:
+            case Statics.InputType.Axes:
                 _handleInput = AxisInput;
                 break;
             default:
@@ -46,11 +55,11 @@ public class EventHandler : MonoBehaviour
             {
                 case 1:
                     _handleInput = AxisInput;
-                    inputType = InputType.Axes;
+                    inputType = Statics.InputType.Axes;
                     break;
                 default:
                     _handleInput = ButtonInput;
-                    inputType = InputType.Buttons;
+                    inputType = Statics.InputType.Buttons;
                     break;
             }
         }
