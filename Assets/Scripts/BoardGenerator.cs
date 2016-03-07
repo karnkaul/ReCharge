@@ -92,8 +92,8 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
             player.SetActive(true);
 
         PlayerController playerController = player.GetComponent<PlayerController>();
-        playerController.moveSpeed += GameManager.Level / 2;
-        playerController.moveSpeed = (int)Mathf.Clamp(playerController.moveSpeed, 30.0f, 50.0f);
+        playerController.moveSpeed += (GameManager.Level) / 2;
+        playerController.moveSpeed = (int)Mathf.Clamp(playerController.moveSpeed, 30.0f, 40.0f);
 
         enemies.Clear();
 

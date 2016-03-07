@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour
         }
     }
     private static int energyCount;
+    private float elapsed;
     
     // Singleton
     private static GameManager instance = null;
@@ -151,6 +152,7 @@ public class GameManager : MonoBehaviour
 
     void Update ()
     {
+        elapsed += Time.deltaTime;
         if (!gameOver)
         {
             if (energyCount <= 0)
@@ -159,6 +161,8 @@ public class GameManager : MonoBehaviour
                 energyCount = 0;
                 UpdateUI();
                 GameOver();
+                elapsed = 0;
+                restartText.text = "";
             }
 
             if (Input.GetKeyDown(KeyCode.Space))
@@ -169,9 +173,16 @@ public class GameManager : MonoBehaviour
 
         else
         {
-            if (Input.anyKeyDown)
+            if (elapsed >= levelLoadDelay)
             {
-                Restart();
+                restartText.text = "Press any key to Restart";
+                UpdateUI();
+
+                if (Input.anyKeyDown && elapsed >= levelLoadDelay)
+                {
+                    elapsed = 0;
+                    Restart();
+                }
             }
         }
     }

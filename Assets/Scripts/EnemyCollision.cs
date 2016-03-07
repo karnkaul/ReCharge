@@ -7,6 +7,7 @@ public class EnemyCollision : MonoBehaviour
     public AudioClip killSound;
 
     private AudioSource audioSource;
+    private bool collided = false;
 
     void Start ()
     {
@@ -15,7 +16,7 @@ public class EnemyCollision : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (!GameManager.gameOver)
+        if (!collided)
         {
             if (other.tag == "Player")
             {
@@ -25,6 +26,7 @@ public class EnemyCollision : MonoBehaviour
                 StartCoroutine(Explode());
                 GameManager.DisablePC();
                 GameManager.AddEnergy(-10);
+                collided = true;
             }
         }
         else
