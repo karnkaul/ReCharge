@@ -88,7 +88,7 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
                 Destroy(player);
             player = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity) as GameObject;
         }
-        else if (!player.activeSelf)
+        if (!player.activeSelf)
             player.SetActive(true);
 
         PlayerController playerController = player.GetComponent<PlayerController>();

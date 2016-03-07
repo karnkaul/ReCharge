@@ -178,7 +178,7 @@ public class GameManager : MonoBehaviour
                 restartText.text = "Press any key to Restart";
                 UpdateUI();
 
-                if (Input.anyKeyDown && elapsed >= levelLoadDelay)
+                if (Input.anyKeyDown)
                 {
                     elapsed = 0;
                     Restart();

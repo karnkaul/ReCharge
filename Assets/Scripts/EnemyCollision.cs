@@ -21,11 +21,11 @@ public class EnemyCollision : MonoBehaviour
             if (other.tag == "Player")
             {
                 audioSource.PlayOneShot(killSound);
-                //StartCoroutine(ExplodeAndGameOver());
-                BoardGenerator.DeleteEnemy(this.gameObject);
-                StartCoroutine(Explode());
-                GameManager.DisablePC();
-                GameManager.AddEnergy(-10);
+                StartCoroutine(ExplodeAndGameOver());
+                other.gameObject.SetActive(false);
+                //BoardGenerator.DeleteEnemy(this.gameObject);
+                //StartCoroutine(Explode());
+                //GameManager.AddEnergy(-10);
                 collided = true;
             }
         }
@@ -39,7 +39,6 @@ public class EnemyCollision : MonoBehaviour
             animator.SetTrigger("explode");
 
         yield return new WaitForSeconds(1);
-        GameManager.EnablePC();
 
         if (this) 
             Destroy(this.transform.parent.gameObject);

@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Debug")]
     public bool printDebugToLog = false;
+    public bool _disabled = false;
 
     public static Statics.VoidV3 SmoothMove;
 
@@ -167,18 +168,13 @@ public class PlayerController : MonoBehaviour
     void Update ()
     {
         elapsed += Time.deltaTime;
+        _disabled = disabled;
 
         if (!disabled)
         {
             if (moves[0] != Vector2.zero && !moving)
                 ExecuteMove();
         }
-    }
-
-    void OnTriggerEnter2D (Collider2D other)
-    {
-        if (other.tag == "Enemy")
-            animator.SetTrigger("Blocked");
     }
 }
 
