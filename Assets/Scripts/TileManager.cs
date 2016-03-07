@@ -33,7 +33,8 @@ public class TileManager : MonoBehaviour
                 Debug.Log("Exit reached.");
                 if (exitSFX)
                     audioSource.PlayOneShot(exitSFX);
-                FindObjectOfType<GameManager>().Invoke("LoadNext", 0f);
+                FindObjectOfType<GameManager>().LoadNext();
+                other.gameObject.SetActive(false);
                 exitReached = true;
             }
             BoardManager.playerTile = this.gameObject;

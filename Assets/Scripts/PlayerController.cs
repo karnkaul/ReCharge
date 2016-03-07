@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
 
     private bool moving = false;
     private float elapsed;
+    private Vector3 defaultScale;
     private GameManager gameManager;
     private IBoardManager boardManager;
     private Animator animator;
@@ -61,6 +62,7 @@ public class PlayerController : MonoBehaviour
             gameManager = FindObjectOfType<GameManager>();
         animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
+        defaultScale = transform.localScale;
     }
 
     public void ResetMoves ()
@@ -109,6 +111,7 @@ public class PlayerController : MonoBehaviour
                 if (moveSFX.Length > 0)
                     audioSource.PlayOneShot(moveSFX[Random.Range(0, moveSFX.Length)]);
                 GameManager.AddEnergy(-1);
+                transform.localScale = defaultScale;
             }
             moves[0] = Vector2.zero;
         }
