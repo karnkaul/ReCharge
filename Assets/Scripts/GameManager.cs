@@ -5,10 +5,12 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    [Header("Level Settings")]
     public float levelLoadDelay = 1;
+    public int initEnergyCount = 25, startLevel = 0;
+    [Header("UI References")]
     public Text energyText, levelText, restartText, gameOverText;
     public CanvasGroup gameOverCanvas;
-    public int initEnergyCount = 25, startLevel = 0;
 
     public static bool gameOver = false, paused = false;
     public static Statics.Void EnablePC, DisablePC, UpdateUI, SetGameOver;
@@ -23,8 +25,10 @@ public class GameManager : MonoBehaviour
         }
     }
     private static int energyCount;
+    
+    // Singleton
     private static GameManager instance = null;
-    private PlayerController playerController;
+
     private IBoardGenerator boardGenerator;
     private IBoardManager boardManager;
 
@@ -62,8 +66,6 @@ public class GameManager : MonoBehaviour
         boardGenerator = GameObject.Find("Board").GetComponent<IBoardGenerator>();
 
         energyCount = initEnergyCount;
-        playerController = FindObjectOfType<PlayerController>();
-        //playerController = GameObject.Find("Player").GetComponent<PlayerController>();
         energyText.text = energyCount.ToString();
         gameOverCanvas.alpha = 0;
         level = startLevel;
@@ -104,7 +106,6 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(levelLoadDelay);
         ++level;
-        //SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         boardGenerator.InitBoard();
         boardManager.ResetPlayer();
         UpdateUI();
@@ -112,22 +113,15 @@ public class GameManager : MonoBehaviour
 
 	void DisablePlayerController ()
     {
-        //PlayerController.DisableMovement();
-        //if (playerController)
-        //    playerController.enabled = false;
         PlayerController.disabled = true;
     }
 
     void EnablePlayerController ()
     {
-        //PlayerController.EnableMovement();
-        //playerController.SubscribeDelegates();
-        //if(playerController)
-        //    playerController.enabled = true;
         PlayerController.disabled = false;
     }
 
-    public void GameOver()
+    void GameOver()
     {
         DisablePlayerController();
         gameOver = true;
@@ -166,17 +160,6 @@ public class GameManager : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                //if (!paused)
-                //{
-                //    Time.timeScale = 0;
-                //    paused = true;
-                //    Debug.Log("paused?");
-                //}
-                //else
-                //{
-                //    Time.timeScale = 1;
-                //    paused = false;
-                //}
                 TogglePause(!paused);
             }
         }

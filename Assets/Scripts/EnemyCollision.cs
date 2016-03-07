@@ -8,13 +8,18 @@ public class EnemyCollision : MonoBehaviour
 
     private AudioSource audioSource;
 
+    void Start ()
+    {
+        audioSource = GameObject.Find("AudioSource").GetComponent<AudioSource>();
+    }
+
     void OnTriggerEnter2D(Collider2D other)
     {
         if (!GameManager.gameOver)
         {
             if (other.tag == "Player")
             {
-                GameObject.Find("AudioSource").GetComponent<AudioSource>().PlayOneShot(killSound);
+                audioSource.PlayOneShot(killSound);
                 StartCoroutine(ExplodeAndGameOver());
                 other.GetComponent<PlayerController>().StopAllCoroutines();
                 other.gameObject.SetActive(false);

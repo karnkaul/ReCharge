@@ -16,14 +16,11 @@ public class PlayerController : MonoBehaviour
     [Header("Debug")]
     public bool printDebugToLog = false;
 
-    //public static Statics.Void EnableMovement, DisableMovement;
     public static Statics.VoidV3 SmoothMove;
 
-
-    //[HideInInspector]
     public static bool disabled = false;
 
-    private bool moving = false; //, disabled = false;
+    private bool moving = false;
     private float elapsed;
     private IBoardManager boardManager;
     private Animator animator;

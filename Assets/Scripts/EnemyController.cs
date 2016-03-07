@@ -27,7 +27,6 @@ public class EnemyController : MonoBehaviour
     private enum States { chasing, wandering, destructing, frozen };
     private States state;
     private Vector3 deltaPosition;
-    private bool chase = true;
     private float cycleCounter;
     private Animator animator;
 

@@ -30,15 +30,6 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
     [Header("Debug")]
     public bool debugInitBoard = false;
 
-    private bool tileSpawnComplete = false;
-    public bool TileSpawnComplete
-    {
-        get
-        {
-            return TileSpawnComplete;
-        }
-    }
-
     private float offsetX, offsetY;
     private IBoardManager boardManager;
     private GameObject player;
@@ -113,7 +104,7 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
                 Renderer rend = tiles[0].GetComponent<Renderer>();
                 Debug.DrawLine(rend.bounds.max, rend.bounds.min);
                 Vector3 position = new Vector3(-2 * rend.bounds.min.x * j, -2 * rend.bounds.min.y * i, 0);
-                int noisyIndex = getNoisyTileNumber(i, j, noiseSampleSize);
+                int noisyIndex = GetNoisyTileNumber(i, j, noiseSampleSize);
 
                 bool noPowerup = false;
                 // Using guaranteed walkable circumference for now
@@ -202,7 +193,7 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
         GameManager.EnablePC();
     }
 
-    int getNoisyTileNumber(int x, int y, float scale)
+    int GetNoisyTileNumber(int x, int y, float scale)
     {
         float noiseValue = Mathf.PerlinNoise(x * scale + offsetX, y * scale + offsetY);
         int tileSetSize = tiles.Length;
@@ -210,19 +201,14 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
 
         float currentBucket = 0;
         int ret = 0;
-        
         do
         {
             currentBucket += bucketSize;
-            
             if (noiseValue <= currentBucket)
-            {
-                //Debug.Log("nv:" + noiseValue + " cb:" + (currentBucket - bucketSize) + "-" + currentBucket + " ret:" + ret);
                 return ret;
-            }
             ret++;
         } while (ret < tileSetSize);
-        //Debug.Log(ret - 1);
+
         return ret - 1;
     }
 }
