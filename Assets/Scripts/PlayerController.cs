@@ -19,7 +19,11 @@ public class PlayerController : MonoBehaviour
     //public static Statics.Void EnableMovement, DisableMovement;
     public static Statics.VoidV3 SmoothMove;
 
-    private bool moving = false, disabled = false;
+
+    //[HideInInspector]
+    public static bool disabled = false;
+
+    private bool moving = false; //, disabled = false;
     private float elapsed;
     private IBoardManager boardManager;
     private Animator animator;
@@ -78,16 +82,14 @@ public class PlayerController : MonoBehaviour
 
     void AttemptMove(Vector2 direction)
     {
-        
         if (!disabled)
         {
-            
             if (elapsed >= inputDelay)
             {
-                // Single input
+                // Single input: queue up (moves.Length-1) overflows.
                 if (EventHandler.inputType == Statics.InputType.Buttons)
                 {
-                    // Cache (moves.Length-1) overflows
+                    
                     if (moves[moves.Length - 1] == Vector2.zero)
                     {
                         int index;
@@ -105,7 +107,7 @@ public class PlayerController : MonoBehaviour
                     
                 }
 
-                // Turbo input
+                // Turbo input: simply execute.
                 else
                     moves[0] = direction;
 
@@ -169,8 +171,11 @@ public class PlayerController : MonoBehaviour
     {
         elapsed += Time.deltaTime;
 
-        if (moves[0] != Vector2.zero && !moving) 
-            ExecuteMove();
+        if (!disabled)
+        {
+            if (moves[0] != Vector2.zero && !moving)
+                ExecuteMove();
+        }
     }
 }
 

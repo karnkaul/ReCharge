@@ -113,16 +113,18 @@ public class GameManager : MonoBehaviour
 	void DisablePlayerController ()
     {
         //PlayerController.DisableMovement();
-        if (playerController)
-            playerController.enabled = false;
+        //if (playerController)
+        //    playerController.enabled = false;
+        PlayerController.disabled = true;
     }
 
     void EnablePlayerController ()
     {
         //PlayerController.EnableMovement();
         //playerController.SubscribeDelegates();
-        if(playerController)
-            playerController.enabled = true;
+        //if(playerController)
+        //    playerController.enabled = true;
+        PlayerController.disabled = false;
     }
 
     public void GameOver()
