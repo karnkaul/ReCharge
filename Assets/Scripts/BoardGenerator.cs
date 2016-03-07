@@ -202,6 +202,7 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
             }
         }
         boardManager.SetTileMap(tileMap);
+        boardManager.ResetPlayer();
     }
 
     void InstantiateEnemy (Vector3 position, GameObject tile)

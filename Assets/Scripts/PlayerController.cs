@@ -5,30 +5,19 @@ public class PlayerController : MonoBehaviour
 { 
     public GameObject board;
 
-    [Range(20, 50)] [Header("Input")]
+    [Range(20, 50)]
     public int moveSpeed = 35;
-    public float _inputDelay = 0.1f;
-
-    [Header("Audio")]
-    public AudioClip[] moveSFX;
-    public AudioClip[] blockedSFX;
-
-    [Header("Debug")]
-    public bool printDebugToLog = false;
-    public bool _disabled = false;
-
-    public static Statics.VoidV3 SmoothMove;
-
+    public float inputDelay = 0.01f;
+    public AudioClip[] moveSFX, blockedSFX;
     public static bool disabled = false;
 
     private bool moving = false;
     private float elapsed;
+    private GameManager gameManager;
     private IBoardManager boardManager;
     private Animator animator;
     private AudioSource audioSource;
-    private EventHandler eventHandler;
-    private Vector2[] moves = new Vector2[2];
-    private float inputDelay;
+    private Vector2[] moves = new Vector2[2]; //{ Vector2.zero, Vector2.zero, Vector2.zero };
 
     void OnEnable ()
     {
@@ -54,14 +43,11 @@ public class PlayerController : MonoBehaviour
 
     public void SubscribeDelegates ()
     {
-        SmoothMove += __SmoothMove;
         EnableMovement();
-        
     }
 
     public void UnsubscribeDelegates ()
     {
-        SmoothMove -= __SmoothMove;
         DisableMovement();
     }
 
@@ -71,11 +57,15 @@ public class PlayerController : MonoBehaviour
             boardManager = (IBoardManager)board.GetComponent<IBoardManager>();
         else
             boardManager = (IBoardManager)GameObject.Find("Board").GetComponent<IBoardManager>();
+        if (!gameManager)
+            gameManager = FindObjectOfType<GameManager>();
         animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
-        eventHandler = FindObjectOfType<EventHandler>();
+    }
 
-        inputDelay = _inputDelay;
+    public void ResetMoves ()
+    {
+        moves = new Vector2[2];
     }
 
     void AttemptMove(Vector2 direction)
@@ -84,34 +74,21 @@ public class PlayerController : MonoBehaviour
         {
             if (elapsed >= inputDelay)
             {
-                // Single input: queue up (moves.Length-1) overflows.
-                if (EventHandler.inputType == Statics.InputType.Buttons)
+                if (moves[moves.Length - 1] == Vector2.zero)
                 {
-                    
-                    if (moves[moves.Length - 1] == Vector2.zero)
-                    {
-                        int index;
-                        for (index = 0; index < moves.Length; ++index)
-                            if (moves[index] == Vector2.zero)
-                                break;
+                    int index;
+                    for (index = 0; index < moves.Length; ++index)
+                        if (moves[index] == Vector2.zero)
+                            break;
 
-                        moves[index] = direction;
+                    moves[index] = direction;
 
-                        if (printDebugToLog)
-                            for (index = 0; index < moves.Length; ++index)
-                            if (moves[index] != Vector2.zero)
-                                Debug.Log(index + ":" + moves[index]);
-                    }
-                    
+                    for (index = 0; index < moves.Length; ++index)
+                        if (moves[index] != Vector2.zero)
+                            Debug.Log(index + ":" + moves[index]);
                 }
-
-                // Turbo input: simply execute.
-                else
-                    moves[0] = direction;
-
                 elapsed = 0;
             }
-          
         }
     }
 
@@ -136,7 +113,7 @@ public class PlayerController : MonoBehaviour
             moves[0] = Vector2.zero;
         }
         
-        // Pseudo-dequeue
+        // Push back
         if (moves[1] != Vector2.zero)
         for (int i = 1; i < moves.Length; ++i)
         {
@@ -146,13 +123,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // Delegate helper
-    void __SmoothMove(Vector3 position)
-    {
-        StartCoroutine(_SmoothMove(position));
-    }
-
-    IEnumerator _SmoothMove (Vector3 position)
+    public IEnumerator SmoothMove (Vector3 position)
     {
         moving = true;
         while (transform.position != position)
@@ -168,13 +139,9 @@ public class PlayerController : MonoBehaviour
     void Update ()
     {
         elapsed += Time.deltaTime;
-        _disabled = disabled;
 
-        if (!disabled)
-        {
-            if (moves[0] != Vector2.zero && !moving)
-                ExecuteMove();
-        }
+        if (moves[0] != Vector2.zero && !moving) 
+            ExecuteMove();
     }
 }
 

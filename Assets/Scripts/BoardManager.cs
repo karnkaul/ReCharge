@@ -63,8 +63,7 @@ public class BoardManager : MonoBehaviour, IBoardManager
                 return false;
             }
             else
-                //StartCoroutine(playerController.SmoothMove(attemptedTile.transform.position));
-                PlayerController.SmoothMove(attemptedTile.transform.position);
+                StartCoroutine(playerController.SmoothMove(attemptedTile.transform.position));
         }
         else
             return false;
@@ -75,6 +74,7 @@ public class BoardManager : MonoBehaviour, IBoardManager
     public void ResetPlayer ()
     {
         player.transform.position = tiles[0, 0].transform.position;
+        player.GetComponent<PlayerController>().ResetMoves();
     }
 
     GameObject GetNextTile (int i, int j, Vector2 direction)
