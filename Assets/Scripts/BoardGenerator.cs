@@ -25,6 +25,8 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
     public GameObject[,] tileMap;
     [HideInInspector]
     public List<GameObject> powerups, supers, enemies;
+    public delegate void _DeleteEnemy(GameObject x);
+    public static _DeleteEnemy DeleteEnemy;
 
     // Debug
     [Header("Debug")]
@@ -33,6 +35,16 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
     private float offsetX, offsetY;
     private IBoardManager boardManager;
     private GameObject player;
+
+    void OnEnable ()
+    {
+        DeleteEnemy += __DeleteEnemy;
+    }
+
+    void OnDisable()
+    {
+        DeleteEnemy -= __DeleteEnemy;
+    }
 
     void Start ()
     {
@@ -53,7 +65,17 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
     public void StopEnemies ()
     {
         foreach (GameObject enemy in enemies)
-            enemy.GetComponent<EnemyController>().triggers.freeze = true;
+            if (enemy)
+                enemy.GetComponent<EnemyController>().triggers.freeze = true;
+    }
+
+    void __DeleteEnemy (GameObject enemy)
+    {
+        foreach(GameObject e in enemies)
+        {
+            if (e == enemy)
+                enemies.Remove(enemy);
+        }
     }
 
     public void InitBoard(bool restart = false)
@@ -93,6 +115,8 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
         // Flush all children
         foreach (Transform obj in transform)
             Destroy(obj.gameObject);
+
+        GameManager.UpdateUI();
 
         offsetX = Random.Range(0.0f, 10.0f - (2 * noiseSampleSize));
         offsetY = Random.Range(0.0f, 10.0f - (2 * noiseSampleSize));

@@ -155,6 +155,9 @@ public class GameManager : MonoBehaviour
         {
             if (energyCount <= 0)
             {
+                boardGenerator.StopEnemies();
+                energyCount = 0;
+                UpdateUI();
                 GameOver();
             }
 

@@ -9,12 +9,14 @@ public class BoardManager : MonoBehaviour, IBoardManager
 
     private GameObject[,] tiles;
     private Vector3[,] tileLocations;
+    private PlayerController playerController;
 
     void Start ()
     {
         tiles = GetComponent<BoardGenerator>().tileMap;
         if (!player)
             player = GameObject.Find("Player");
+        playerController = player.GetComponent<PlayerController>();
     }
 
     // Interface method
@@ -61,6 +63,7 @@ public class BoardManager : MonoBehaviour, IBoardManager
                 return false;
             }
             else
+                //StartCoroutine(playerController.SmoothMove(attemptedTile.transform.position));
                 PlayerController.SmoothMove(attemptedTile.transform.position);
         }
         else
