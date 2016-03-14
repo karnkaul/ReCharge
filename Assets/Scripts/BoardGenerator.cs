@@ -95,6 +95,8 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
         playerController.moveSpeed += (GameManager.Level) / 2;
         playerController.moveSpeed = (int)Mathf.Clamp(playerController.moveSpeed, 30.0f, 40.0f);
 
+        foreach (GameObject enemy in enemies)
+            Destroy(enemy);
         enemies.Clear();
 
         float levelPowerupChance = powerupChance - (float)(GameManager.Level) / 2;
@@ -209,7 +211,7 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
     void InstantiateEnemy (Vector3 position, GameObject tile)
     {
         GameObject enemy = Instantiate(enemyPrefab, position, Quaternion.identity) as GameObject;
-        enemy.transform.parent = tile.transform;
+        //enemy.transform.parent = tile.transform;
         enemy.name = "Enemy " + enemies.Count;
         enemies.Add(enemy);
     }

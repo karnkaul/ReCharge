@@ -16,16 +16,22 @@ public class EnemyCollision : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        Debug.Log(other.name);
         if (!collided)
         {
             if (other.tag == "Player")
             {
                 audioSource.PlayOneShot(killSound);
-                StartCoroutine(ExplodeAndGameOver());
-                other.gameObject.SetActive(false);
-                //BoardGenerator.DeleteEnemy(this.gameObject);
-                //StartCoroutine(Explode());
-                //GameManager.AddEnergy(-10);
+
+                // Kill
+                //StartCoroutine(ExplodeAndGameOver());
+                //other.gameObject.SetActive(false);
+
+                // Penalise
+                BoardGenerator.DeleteEnemy(this.gameObject);
+                StartCoroutine(Explode());
+                GameManager.AddEnergy(-10);
+
                 collided = true;
             }
         }
