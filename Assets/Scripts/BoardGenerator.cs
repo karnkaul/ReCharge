@@ -151,6 +151,7 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
 
                 tile.transform.parent = transform;
                 tile.name = name;
+                tile.GetComponent<TileManager>().index = new Vector2(j, i);
                 tileMap[j, i] = tile;
 
                 if (i == numTiles - 1 && j == numTiles - 1)

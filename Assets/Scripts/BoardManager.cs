@@ -31,11 +31,18 @@ public class BoardManager : MonoBehaviour, IBoardManager
         if (tileLocations == null)
             return Vector2.zero;
 
-        for (int i = 0; i < tiles.GetLength(0); ++i)
-            for (int j = 0; j < tiles.GetLength(1); ++j)
-                if (playerTile == tiles[i, j])
-                    return new Vector2(i, j);
-        return Vector2.zero;
+        //for (int i = 0; i < tiles.GetLength(0); ++i)
+        //    for (int j = 0; j < tiles.GetLength(1); ++j)
+        //        if (playerTile == tiles[i, j])
+        //            return new Vector2(i, j);
+        try
+        {
+            return playerTile.GetComponent<TileManager>().index;
+        }
+        catch
+        {
+            return Vector2.zero;
+        }
     }
 
     // Interface method

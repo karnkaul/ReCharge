@@ -6,6 +6,7 @@ public class TileManager : MonoBehaviour
     public enum SpawnMode { Delayed, Instant };
     public SpawnMode spawnMode;
     public AudioClip exitSFX;
+    public Vector2 index;
 
     private bool exitReached;
     private AudioSource audioSource;
