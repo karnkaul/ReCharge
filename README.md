@@ -7,4 +7,6 @@ Space : Pause
 
 # Rules
 Each move costs one energy point (counter located on the left side of the screen), and game is over when all energy points have been exhausted. 
-Avoid contact with enemy clouds will cause you to lose great amounts
+Avoid contact with enemy clouds: they will cause you to lose a large dose of energy.
+
+Note: Music by Plini (Every Piece Matters).
