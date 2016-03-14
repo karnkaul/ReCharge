@@ -1,4 +1,4 @@
-# ReCharge
+# (Re)Charge
 A game project based on procedural content generation, (Re)Charge is about rushing to each level's exit while picking up as many energy units as possible, and dodging enemy clouds.
 
 # Controls
