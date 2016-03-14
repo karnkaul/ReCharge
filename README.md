@@ -3,6 +3,7 @@ A game project based on procedural content generation, (Re)Charge is about rushi
 
 # Controls
 WASD / Arrow keys : Move
+
 Space : Pause
 
 # Rules
