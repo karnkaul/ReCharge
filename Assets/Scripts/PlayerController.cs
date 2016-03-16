@@ -10,6 +10,9 @@ public class PlayerController : MonoBehaviour
     public float inputDelay = 0.01f;
     public AudioClip[] moveSFX, blockedSFX;
     public static bool disabled = false;
+    public bool debug = false;
+
+    private static int instance = 0;
 
     private bool moving = false;
     private float elapsed;
@@ -63,6 +66,8 @@ public class PlayerController : MonoBehaviour
         animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
         defaultScale = transform.localScale;
+
+        Debug.Log("Player instance #" + ++instance);
     }
 
     public void ResetMoves ()
@@ -85,9 +90,10 @@ public class PlayerController : MonoBehaviour
 
                     moves[index] = direction;
 
-                    for (index = 0; index < moves.Length; ++index)
-                        if (moves[index] != Vector2.zero)
-                            Debug.Log(index + ":" + moves[index]);
+                    if(debug)
+                        for (index = 0; index < moves.Length; ++index)
+                            if (moves[index] != Vector2.zero)
+                                Debug.Log(index + ":" + moves[index]);
                 }
                 elapsed = 0;
             }
@@ -128,15 +134,18 @@ public class PlayerController : MonoBehaviour
 
     public IEnumerator SmoothMove (Vector3 position)
     {
-        moving = true;
-        while (transform.position != position)
-        { 
-            transform.position = Vector3.Lerp(transform.position, position, 0.5f * Time.deltaTime * moveSpeed);
-            if (Mathf.Abs(transform.position.sqrMagnitude - position.sqrMagnitude) < 0.5f)
-                transform.position = position;
-            yield return null;
+        if (this)
+        {
+            moving = true;
+            while (transform.position != position)
+            {
+                transform.position = Vector3.Lerp(transform.position, position, 0.5f * Time.deltaTime * moveSpeed);
+                if (Mathf.Abs(transform.position.sqrMagnitude - position.sqrMagnitude) < 0.5f)
+                    transform.position = position;
+                yield return null;
+            }
+            moving = false;
         }
-        moving = false;
     }
 
     void Update ()

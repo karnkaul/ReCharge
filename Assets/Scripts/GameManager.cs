@@ -107,8 +107,8 @@ public class GameManager : MonoBehaviour
     {
         yield return new WaitForSeconds(levelLoadDelay);
         ++level;
-        boardGenerator.InitBoard();
         boardManager.ResetPlayer();
+        boardGenerator.InitBoard(true);
         UpdateUI();
     }
 
@@ -146,7 +146,7 @@ public class GameManager : MonoBehaviour
         level = startLevel;
         energyCount = initEnergyCount;
         gameOverCanvas.alpha = 0;
-        boardGenerator.InitBoard();
+        boardGenerator.InitBoard(true);
         boardManager.ResetPlayer();
     }
 

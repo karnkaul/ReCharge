@@ -57,7 +57,7 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
     {
 	    if (debugInitBoard)
         {
-            InitBoard();
+            InitBoard(true);
             debugInitBoard = false;
         }
     }
@@ -78,22 +78,31 @@ public class BoardGenerator : MonoBehaviour, IBoardGenerator
         }
     }
 
+    IEnumerator DelayedEnablePC ()
+    {
+        yield return new WaitForSeconds(0.5f);
+        PlayerController.disabled = false;
+    }
+
     public void InitBoard(bool restart = false)
     {
         if (!player)
             player = GameObject.Find("Player");
         if (restart)
         {
-            if (player)
-                Destroy(player);
-            player = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity) as GameObject;
+            Debug.Log("Restart init board");
+            //if (player)
+            //    Destroy(player);
+            //player = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity) as GameObject;
         }
-        if (!player.activeSelf)
-            player.SetActive(true);
+        
+        //if (!player.activeSelf)
+        //    player.SetActive(true);
 
         PlayerController playerController = player.GetComponent<PlayerController>();
         playerController.moveSpeed += (GameManager.Level) / 2;
         playerController.moveSpeed = (int)Mathf.Clamp(playerController.moveSpeed, 30.0f, 40.0f);
+        PlayerController.disabled = true;
 
         foreach (GameObject enemy in enemies)
             Destroy(enemy);

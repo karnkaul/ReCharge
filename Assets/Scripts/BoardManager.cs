@@ -80,8 +80,13 @@ public class BoardManager : MonoBehaviour, IBoardManager
 
     public void ResetPlayer ()
     {
+        if (player)
+            Destroy(player);
+        player = Instantiate(FindObjectOfType<BoardGenerator>().playerPrefab, Vector3.zero, Quaternion.identity) as GameObject;
+        player.name = "Player";
         player.transform.position = tiles[0, 0].transform.position;
-        player.GetComponent<PlayerController>().ResetMoves();
+        playerController = player.GetComponent<PlayerController>();
+        playerController.ResetMoves();
     }
 
     GameObject GetNextTile (int i, int j, Vector2 direction)

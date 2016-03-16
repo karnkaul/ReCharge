@@ -35,7 +35,7 @@ public class TileManager : MonoBehaviour
                 if (exitSFX)
                     audioSource.PlayOneShot(exitSFX);
                 FindObjectOfType<GameManager>().LoadNext();
-                other.gameObject.SetActive(false);
+                //other.gameObject.SetActive(false);
                 exitReached = true;
             }
             BoardManager.playerTile = this.gameObject;

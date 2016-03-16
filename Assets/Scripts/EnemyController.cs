@@ -35,8 +35,6 @@ public class EnemyController : MonoBehaviour
 
 	void Start ()
     {
-        if (!target)
-            target = GameObject.Find("Player");
 
         animator = GetComponentInChildren<Animator>();
         int roll = Random.Range(0, 2);
@@ -70,6 +68,9 @@ public class EnemyController : MonoBehaviour
 	
 	void Update ()
     {
+        if (!target)
+            target = GameObject.Find("Player");
+
         // Timers
         cycleCounter += Time.deltaTime;
         
