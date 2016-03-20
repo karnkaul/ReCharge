@@ -143,6 +143,8 @@ public class PlayerController : MonoBehaviour
                 if (Mathf.Abs(transform.position.sqrMagnitude - position.sqrMagnitude) < 0.5f)
                     transform.position = position;
                 yield return null;
+                if (!this)
+                    break;
             }
             moving = false;
         }

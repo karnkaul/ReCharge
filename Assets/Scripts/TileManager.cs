@@ -32,6 +32,8 @@ public class TileManager : MonoBehaviour
             if (this.tag == "Exit" && !exitReached)
             {
                 Debug.Log("Exit reached.");
+                FindObjectOfType<PlayerController>().ResetMoves();
+                GameManager.DisablePC();
                 if (exitSFX)
                     audioSource.PlayOneShot(exitSFX);
                 FindObjectOfType<GameManager>().LoadNext();
