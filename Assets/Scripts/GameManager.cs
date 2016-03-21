@@ -27,7 +27,9 @@ public class GameManager : MonoBehaviour
     }
     private static int energyCount;
     private float elapsed;
-    
+    private string _restartText = "Press any key to restart\nPress Esc to exit";
+    private string _pauseText = "Press Space to resume\nPress Esc to exit";
+
     // Singleton
     private static GameManager instance = null;
 
@@ -144,16 +146,20 @@ public class GameManager : MonoBehaviour
         DisablePlayerController();
         gameOver = true;
         gameOverText.text = "Game Over";
-        restartText.text = "Press any key to restart";
+        restartText.text = _restartText;
         gameOverCanvas.alpha = 1;
     }
 
     void TogglePause (bool pause)
     {
         gameOverText.text = "Paused";
-        restartText.text = "Press Space/Esc to continue/exit.";
+        restartText.text = _pauseText;
         gameOverCanvas.alpha = (pause) ? 1 : 0;
         Time.timeScale = (pause) ? 0 : 1;
+        if (paused)
+            EnablePC();
+        else
+            DisablePC();
         paused = pause;
     }
 
@@ -189,17 +195,26 @@ public class GameManager : MonoBehaviour
 
             if (paused)
                 if (Input.GetKeyDown(KeyCode.Escape))
+                {
+                    Debug.Log("Quit");
                     Application.Quit();
+                }
         }
 
         else
         {
             if (elapsed >= levelLoadDelay)
             {
-                restartText.text = "Press any key to Restart";
+                restartText.text = _restartText;
                 UpdateUI();
 
-                if (Input.anyKeyDown)
+                if (Input.GetKeyDown(KeyCode.Escape))
+                {
+                    Debug.Log("Quit");
+                    Application.Quit();
+                }
+
+                else if (Input.anyKeyDown)
                 {
                     elapsed = 0;
                     Restart();
