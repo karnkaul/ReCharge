@@ -5,6 +5,7 @@ A game project based on procedural content generation, (Re)Charge is about rushi
 WASD / Arrow keys : Move
 
 Space : Pause
+Esc : Quit (when paused)
 
 # Rules
 Each move costs one energy point (counter located on the left side of the screen), and game is over when all energy points have been exhausted. 
