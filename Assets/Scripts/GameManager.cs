@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
     [Header("Level Settings")]
     public float levelLoadDelay = 1;
     public int initEnergyCount = 25, startLevel = 0;
+    public GameObject popupPrefab;
     [Header("UI References")]
     public Text energyText, levelText, restartText, gameOverText;
     public CanvasGroup gameOverCanvas;
@@ -77,6 +78,9 @@ public class GameManager : MonoBehaviour
         if (!gameOver)
         {
             energyCount += count;
+            int offset = (count > 0) ? -1 : 0;
+            if (popupPrefab && count != -1)
+                PopupText(count + offset);
             UpdateUI();
         }
     }
@@ -84,6 +88,19 @@ public class GameManager : MonoBehaviour
     void _UpdateUI ()
     {
         StartCoroutine(DelayedUIUpdate());
+    }
+
+    void PopupText (int count)
+    {
+        string text = (count > 0) ? "+" : "";
+        text += count.ToString();
+        float r = (count > 0) ? 0 : 0.8f, g = (count > 0) ? 0.8f : 0;
+        Color color = new Color(r, g, 0.6f, 1);
+
+        GameObject popup = Instantiate(popupPrefab, GameObject.Find("Player").transform.position, Quaternion.identity) as GameObject;
+        Text popupText = popup.transform.Find("Delta Count").GetComponent<Text>();
+        popupText.color = color;
+        popupText.text = text;
     }
 
     IEnumerator DelayedUIUpdate ()
@@ -134,7 +151,7 @@ public class GameManager : MonoBehaviour
     void TogglePause (bool pause)
     {
         gameOverText.text = "Paused";
-        restartText.text = "Press Space to continue";
+        restartText.text = "Press Space/Esc to continue/exit.";
         gameOverCanvas.alpha = (pause) ? 1 : 0;
         Time.timeScale = (pause) ? 0 : 1;
         paused = pause;
@@ -169,6 +186,10 @@ public class GameManager : MonoBehaviour
             {
                 TogglePause(!paused);
             }
+
+            if (paused)
+                if (Input.GetKeyDown(KeyCode.Escape))
+                    Application.Quit();
         }
 
         else

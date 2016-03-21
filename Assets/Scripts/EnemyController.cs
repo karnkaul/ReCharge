@@ -53,7 +53,6 @@ public class EnemyController : MonoBehaviour
 
     void FuzzProperties ()
     {
-        float noise = 1.0f - properties.SNR;
         properties.cycleTime = FuzzProperty(properties.cycleTime);
         properties.speed = properties.speed * ((float)(GameManager.Level + 1) / 5) + 1;
         properties.speed = Mathf.Clamp(properties.speed, 0.2f, 4.0f);
@@ -136,7 +135,6 @@ public class EnemyController : MonoBehaviour
     void Wander()
     {
         //transform.position += new Vector3(Random.Range(-0.1f, 0.1f), Random.Range(-0.1f, 0.1f));
-        float noise = Mathf.PerlinNoise(transform.position.x, transform.position.y);
         transform.position = transform.position + deltaPosition.normalized * properties.speed * Time.deltaTime * 5;
         ClampPosition();
     }
