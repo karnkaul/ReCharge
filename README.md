@@ -15,9 +15,9 @@ Note: Music by Plini (Every Piece Matters).
 
 #Changelog
 v0.3 
-	- Added feedback for collecting  powerups / colliding with enemy clouds.
-	- Fixed player vanishing on reaching exit.
-	- Add graceful exit (press Esc when paused / when game is over).
+- Added feedback for collecting  powerups / colliding with enemy clouds.
+- Fixed player vanishing on reaching exit.
+- Add graceful exit (press Esc when paused / when game is over).
 	
 v0.2
-	- From instadeath to permadeath.
+- From instadeath to permadeath.
