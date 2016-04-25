@@ -17,6 +17,13 @@ public class EventHandler : MonoBehaviour
 
     // Singleton
     private static EventHandler instance;
+    public static EventHandler Instance
+    {
+        get { return instance; }
+    }
+
+    private enum AndroidControl { Taps, Gyro };
+    private AndroidControl androidControl;
 
     private bool W;
     private bool A;
@@ -26,6 +33,8 @@ public class EventHandler : MonoBehaviour
     private bool Down;
     private bool Left;
     private bool Right;
+
+    private int x, y;
 
     void Awake ()
     {
@@ -100,7 +109,7 @@ public class EventHandler : MonoBehaviour
 
     void ButtonInput()
     {
-        short x = 0, y = 0;
+        x = y = 0;
 
         if (Up || W)
             y = 1;
@@ -111,6 +120,12 @@ public class EventHandler : MonoBehaviour
         else if (Right || D)
             x = 1;
 
+
+#if UNITY_ANDROID
+        if (androidControl == AndroidControl.Gyro)
+            HandleGyro();
+#endif
+
         Vector2 direction = new Vector2(x, y);
         if (direction.magnitude > 1.0f)
             direction = Vector2.zero;
@@ -119,6 +134,54 @@ public class EventHandler : MonoBehaviour
         {
             if (handleInput != null)
                 handleInput(direction);
+        }
+    }
+
+    void HandleGyro()
+    {
+        float deadzone = 0.3f;
+        float _x = Input.acceleration.x;
+        float _y = Input.acceleration.y;
+
+        // Positive
+        if (_x > deadzone || _y > deadzone)
+        {
+            if (_x >= _y)
+            {
+                _y = 0;
+                _x = 1;
+            }
+            else
+            {
+                _x = 0;
+                _y = 1;
+            }
+        }
+        else if (_x < -deadzone || _y < -deadzone)
+        {
+            if (_x <= _y)
+            {
+                _y = 0;
+                _x = -1;
+            }
+            else
+            {
+                _x = 0;
+                _y = -1;
+            }
+        }
+        x = (short)_x;
+        y = (short)_y;
+    }
+
+    public void HandleTaps(int x, int y)
+    {
+        if (!PlayerController.disabled)
+        {
+            this.x = x;
+            this.y = y;
+            if (handleInput != null)
+                handleInput(new Vector2(x, y));
         }
     }
 }

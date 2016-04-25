@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
         }
     }
     private static int energyCount;
-    private float elapsed;
+    private float elapsed, inputDelay = 0.5f;
     private string _restartText = "Press any key to restart\nPress Esc to exit";
     private string _pauseText = "Press Space to resume\nPress Esc to exit";
 
@@ -63,6 +63,10 @@ public class GameManager : MonoBehaviour
 
         DontDestroyOnLoad(this);
 
+#if !UNITY_ANDROID
+        Destroy(GameObject.Find("Touch Canvas"));
+#endif
+
         if (!energyText)
             Debug.Log("Reference to Energy Text missing.");
 
@@ -73,6 +77,10 @@ public class GameManager : MonoBehaviour
         energyText.text = energyCount.ToString();
         gameOverCanvas.alpha = 0;
         level = startLevel;
+
+#if UNITY_ANDROID
+        _restartText = "Tap anywhere to restart\nPress back to exit";
+#endif
     }
 
     void _AddEnergy (int count)
@@ -176,6 +184,9 @@ public class GameManager : MonoBehaviour
     void Update ()
     {
         elapsed += Time.deltaTime;
+        if (inputDelay > 0)
+            inputDelay -= Time.unscaledDeltaTime;
+
         if (!gameOver)
         {
             if (energyCount <= 0)
@@ -190,10 +201,13 @@ public class GameManager : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Space))
             {
+                inputDelay = 0.5f;
                 TogglePause(!paused);
             }
 
+#if UNITY_EDITOR || UNITY_STANDALONE || UNITY_WEBPLAYER
             if (paused)
+#endif
                 if (Input.GetKeyDown(KeyCode.Escape))
                 {
                     Debug.Log("Quit");
@@ -214,8 +228,9 @@ public class GameManager : MonoBehaviour
                     Application.Quit();
                 }
 
-                else if (Input.anyKeyDown)
+                else if (Input.anyKeyDown || (inputDelay <= 0 && Input.touchCount > 0))
                 {
+                    inputDelay = 0.5f;
                     elapsed = 0;
                     Restart();
                 }
