@@ -156,6 +156,9 @@ public class PlayerController : MonoBehaviour
 
         if (moves[0] != Vector2.zero && !moving) 
             ExecuteMove();
+
+        if (!GameManager.gameOver)
+            transform.Rotate(0, 0, 240 * Time.deltaTime);
     }
 }
 

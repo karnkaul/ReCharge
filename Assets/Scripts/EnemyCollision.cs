@@ -28,6 +28,7 @@ public class EnemyCollision : MonoBehaviour
                 //other.gameObject.SetActive(false);
 
                 // Penalise
+                other.GetComponent<Animator>().SetTrigger("hit");
                 BoardGenerator.DeleteEnemy(this.gameObject);
                 StartCoroutine(Explode());
                 GameManager.AddEnergy(-10);
