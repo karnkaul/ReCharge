@@ -8,7 +8,7 @@ public class TouchHandler : MonoBehaviour
     public float targetAlpha = 0.5f;
     public float fadeDuration = 5.0f;
     
-    void Start ()
+    public void Fade ()
     {
         StartCoroutine(FadeButtons());
     }

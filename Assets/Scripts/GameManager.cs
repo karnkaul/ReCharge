@@ -65,6 +65,7 @@ public class GameManager : MonoBehaviour
 
 #if !UNITY_ANDROID
         Destroy(GameObject.Find("Touch Canvas"));
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
 #endif
 
         if (!energyText)

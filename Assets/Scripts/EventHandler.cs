@@ -34,6 +34,7 @@ public class EventHandler : MonoBehaviour
     private bool Left;
     private bool Right;
 
+    private bool firstTap = true;
     private int x, y;
 
     void Awake ()
@@ -182,6 +183,12 @@ public class EventHandler : MonoBehaviour
             this.y = y;
             if (handleInput != null)
                 handleInput(new Vector2(x, y));
+
+            if (firstTap)
+            {
+                FindObjectOfType<TouchHandler>().Fade();
+                firstTap = false;
+            }
         }
     }
 }
