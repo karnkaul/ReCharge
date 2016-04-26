@@ -224,10 +224,7 @@ public class GameManager : MonoBehaviour
                 UpdateUI();
 
                 if (Input.GetKeyDown(KeyCode.Escape))
-                {
-                    Debug.Log("Quit");
-                    Application.Quit();
-                }
+                    Quit();
 
                 else if (Input.anyKeyDown || (inputDelay <= 0 && Input.touchCount > 0))
                 {
@@ -237,5 +234,11 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void Quit()
+    {
+        Debug.Log("Quit");
+        Application.Quit();
     }
 }
